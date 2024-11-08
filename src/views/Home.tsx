@@ -12,7 +12,7 @@ export const Home: React.FC = () => {
       
       {/* Opis */}
       <p className="text-lg text-center mb-8 max-w-2xl text-gray-600">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel
+        Hallo Arschloch dolor sit amet, consectetur adipiscing elit. Donec vel
         gravida arcu. Vestibulum feugiat, sapien ultrices fermentum congue,
         quam velit venenatis sem, sit amet aliquam massa nisl quis neque. Fusce
         ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus,
