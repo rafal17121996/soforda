@@ -36,7 +36,9 @@ export const Navbar: React.FC = () => {
                   label="Admin"
                   subItems={[
                     { to: "/admin/users", label: "Users" },
-                    { to: "/settings", label: "Settings" },
+                    { to: "/admin/roles", label: "Roles" },
+                    { to: "/admin/companies", label: "Comanies" },
+                    { to: "/admin/departments", label: "Departments" },
                   ]}
                 />
               </li>
