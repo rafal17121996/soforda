@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
 //   baseURL: process.env.REACT_APP_API_URL || 'http://192.168.100.3:8000',
-  baseURL:  'http://192.168.100.33:8000',
+  baseURL:  'https://app.sofortda-gmbh.de',
   timeout: 10000, 
 });
 
