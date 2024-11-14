@@ -243,9 +243,13 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleDelete = async () => {
     if (userToDelete === null) return;
 
+    const user = users.find((u) => u.id === userToDelete);
+    const userName = user ? user.username : "Unknown User";
+
+
     try {
       await api.delete(`/users/${userToDelete}`);
-      toast.success(`User with ID ${userToDelete} deleted successfully.`);
+      toast.success(`User with ID ${userToDelete}. ${userName} deleted successfully.`);
       setUserToDelete(null);
       setIsModalOpen(false);
       if (onUserUpdated) {

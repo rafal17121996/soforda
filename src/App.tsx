@@ -10,6 +10,7 @@ import AdminPage from "./views/Admin";
 import Roles from "./views/Roles";
 import Companies from "./views/Companies";
 import Departments from "./views/Departments";
+import Managment from "./views/Managment";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           //Admin only
           <Route element={<ProtectedRoute roles={["admin"]} />}>
             <Route path="/admin/users" element={<AdminPage />} />
+            <Route path="/admin/managment" element={<Managment />} />
             <Route path="/admin/roles" element={<Roles />} />
             <Route path="/admin/companies" element={<Companies />} />
             <Route path="/admin/departments" element={<Departments />} />
