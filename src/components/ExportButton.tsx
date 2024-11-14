@@ -1,3 +1,5 @@
+// ExportButton.tsx
+
 import React, { useEffect, useRef, useState } from "react";
 import { PaginationData } from "../types/PaginationData";
 import api from "../api/axiosConfig";
@@ -5,11 +7,14 @@ import { toast } from "react-toastify";
 import { handleAxiosError } from "../utils/handleAxiosError";
 
 interface PropsExportButton {
-    paginationData: PaginationData;
-    tempSearch: string
+  paginationData: PaginationData;
+  tempSearch: string;
 }
 
-export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSearch}) => {
+export const ExportButton: React.FC<PropsExportButton> = ({
+  paginationData,
+  tempSearch,
+}) => {
   const [isExportDropdownOpen, setIsExportDropdownOpen] =
     useState<boolean>(false);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
@@ -31,27 +36,28 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
 
   const generatePDF = async () => {
     try {
+      // Fixed the endpoint string using template literals
       let endpoint = `/users?page=${paginationData.page}&size=${paginationData.page_size}&format=pdf`;
       if (tempSearch) {
         endpoint += `&search=${encodeURIComponent(tempSearch)}`;
       }
 
-      // Ustawienie responseType na 'blob'
+      // Set responseType to 'blob'
       const response = await api.get(endpoint, { responseType: "blob" });
 
-      // Utworzenie obiektu Blob z odpowiedzi
+      // Create a Blob from the PDF data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
 
-      // Utworzenie URL do Blob
+      // Create a URL for the Blob
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
-      // Utworzenie elementu <a> do pobrania pliku
+      // Create an <a> element to download the PDF
       const link = document.createElement("a");
       link.href = pdfUrl;
 
-      // Opcjonalnie: pobierz nazwę pliku z nagłówka 'Content-Disposition'
+      // Extract filename from 'Content-Disposition' header or use default
       const contentDisposition = response.headers["content-disposition"];
-      let fileName = "users.pdf"; // Domyślna nazwa pliku
+      let fileName = "users.pdf"; // Default filename
       if (contentDisposition) {
         const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
         if (fileNameMatch && fileNameMatch[1]) {
@@ -60,26 +66,22 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
       }
       link.download = fileName;
 
-      // Dodanie linku do dokumentu i programowe kliknięcie
+      // Append the link to the document and trigger the download
       document.body.appendChild(link);
       link.click();
 
-      // Usunięcie linku i zwolnienie URL
+      // Clean up
       document.body.removeChild(link);
       URL.revokeObjectURL(pdfUrl);
-      toast.success('Pobrano PDF');
-
-    //   setError("");
+      toast.success("PDF downloaded successfully!");
     } catch (error: unknown) {
       handleAxiosError(error);
-    
-    } finally {
-    //   setLoading(false);
     }
   };
+
   const generateCSV = async () => {
     try {
-    //   setLoading(true);
+      // Fixed the endpoint string using template literals
       let endpoint = `/users?page=${paginationData.page}&size=${paginationData.page_size}&format=csv`;
       if (tempSearch) {
         endpoint += `&search=${encodeURIComponent(tempSearch)}`;
@@ -88,7 +90,7 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
       // Set responseType to 'blob'
       const response = await api.get(endpoint, { responseType: "blob" });
 
-      // Create a Blob object from the response
+      // Create a Blob from the CSV data
       const csvBlob = new Blob([response.data], {
         type: "text/csv;charset=utf-8;",
       });
@@ -96,13 +98,13 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
       // Create a URL for the Blob
       const csvUrl = URL.createObjectURL(csvBlob);
 
-      // Create an <a> element to download the file
+      // Create an <a> element to download the CSV
       const link = document.createElement("a");
       link.href = csvUrl;
 
-      // Optionally: Get the file name from 'Content-Disposition' header
+      // Extract filename from 'Content-Disposition' header or use default
       const contentDisposition = response.headers["content-disposition"];
-      let fileName = "users.csv"; // Default file name
+      let fileName = "users.csv"; // Default filename
       if (contentDisposition) {
         const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
         if (fileNameMatch && fileNameMatch[1]) {
@@ -111,20 +113,60 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
       }
       link.download = fileName;
 
-      // Append the link to the document and programmatically click it
+      // Append the link to the document and trigger the download
       document.body.appendChild(link);
       link.click();
 
       // Clean up
       document.body.removeChild(link);
       URL.revokeObjectURL(csvUrl);
-
-    //   setError("");
+      toast.success("CSV downloaded successfully!");
     } catch (error: unknown) {
       handleAxiosError(error);
-    
-    } finally {
-    //   setLoading(false);
+    }
+  };
+
+  /**
+   * Handles the Print functionality by fetching printable HTML content
+   * and opening it in a new browser tab.
+   */
+  const handlePrint = async () => {
+    try {
+      // Construct the endpoint with 'print' format
+      let endpoint = `/users?page=${paginationData.page}&size=${paginationData.page_size}&format=print`;
+      if (tempSearch) {
+        endpoint += `&search=${encodeURIComponent(tempSearch)}`;
+      }
+
+      // Make a GET request to fetch the printable HTML content
+      const response = await api.get(endpoint, { responseType: "blob" });
+
+      // Create a Blob from the HTML content
+      const printBlob = new Blob([response.data], { type: "text/html" });
+
+      // Create a URL for the Blob
+      const printUrl = URL.createObjectURL(printBlob);
+
+      // Open the printable content in a new window
+      const printWindow = window.open(printUrl, "_blank");
+      if (printWindow) {
+        // Optional: Automatically trigger the print dialog once the content loads
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+        toast.success("Print dialog opened.");
+      } else {
+        toast.error(
+          "Unable to open print window. Please allow pop-ups for this website."
+        );
+      }
+
+      // Clean up the Blob URL after a short delay to ensure the window has loaded
+      setTimeout(() => {
+        URL.revokeObjectURL(printUrl);
+      }, 1000);
+    } catch (error: unknown) {
+      handleAxiosError(error);
     }
   };
 
@@ -189,7 +231,7 @@ export const ExportButton:React.FC<PropsExportButton> = ({paginationData, tempSe
               role="menuitem"
               onClick={() => {
                 setIsExportDropdownOpen(false);
-                // handlePrint();
+                handlePrint();
               }}
             >
               Print

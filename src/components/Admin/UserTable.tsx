@@ -9,9 +9,55 @@ import api from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { handleAxiosError } from "../../utils/handleAxiosError";
 import ConfirmationModal from "../ConfirmationModal";
-import { useAssignedWorkers } from "../../hooks/useAssignedWorkers"; // Import the custom hook
+import { useNotAssignedWorkers } from "../../hooks/useNotAssignedWorkers"; // Import the custom hook
 import { useRoles } from "../../hooks/useRoles"; // Import the roles hook
 import Select, { SingleValue } from "react-select"; // Import react-select
+import { Skeleton } from "@mui/material";
+
+const customSelectStyles = {
+  control: (base: any) => ({
+    ...base,
+    minHeight: '30px',
+    height: '30px',
+    fontSize: '12px',
+  }),
+  indicatorsContainer: (base: any) => ({
+    ...base,
+    height: '30px',
+  }),
+  valueContainer: (base: any) => ({
+    ...base,
+    height: '30px',
+    padding: '0 6px',
+  }),
+  input: (base: any) => ({
+    ...base,
+    margin: '0px',
+    padding: '0px',
+    fontSize: '12px',
+  }),
+  placeholder: (base: any) => ({
+    ...base,
+    fontSize: '12px',
+  }),
+  menu: (base: any) => ({
+    ...base,
+    fontSize: '12px',
+    zIndex: 9999,
+  }),
+  menuList: (base: any) => ({
+    ...base,
+    padding: '0px',
+    maxHeight: '150px',
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    padding: '6px 12px',
+    fontSize: '12px',
+    backgroundColor: state.isFocused ? '#f0f0f0' : 'white',
+    color: 'black',
+  }),
+};
 
 interface WorkerOption {
   value: number;
@@ -30,9 +76,19 @@ interface UserTableProps {
   paginationData: PaginationData;
   onPageChange: (page: number) => void;
   editMode?: boolean;
-  onAddUser?: () => void;
   onUserUpdated?: () => void; // Callback to refresh users after update
+  withTempPass?: boolean;
 }
+
+const SkeletonRow = ({ columns }: { columns: number }) => (
+  <tr className="border-b border-gray-200">
+    {Array.from({ length: columns }).map((_, index) => (
+      <td key={index} className="py-3 px-6 text-center">
+        <Skeleton variant="rectangular" width="100%" height={20} />
+      </td>
+    ))}
+  </tr>
+);
 
 const UserTable: React.FC<UserTableProps> = ({
   users,
@@ -41,23 +97,24 @@ const UserTable: React.FC<UserTableProps> = ({
   paginationData,
   onPageChange,
   editMode = false,
-  onAddUser,
   onUserUpdated,
+  withTempPass = false,
 }) => {
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editingUserUsername, setEditingUserUsername] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<User | null>(null);
 
   // State for Confirmation Modal
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalOpenPass, setIsModalOpenPass] = useState<boolean>(false);
   const [temporaryPassword, setTemporaryPassword] = useState<string>("");
-  const [userToDelete, setUserToDelete] = useState<number | null>(null);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null); 
 
   // State for Workers and Roles
   const [currentWorkerId, setCurrentWorkerId] = useState<number | undefined>(undefined);
 
   // Fetch assigned workers using the custom hook, include current worker if editing
-  const { workers, loading: workersLoading, error: workersError } = useAssignedWorkers(currentWorkerId);
+  const { workers, loading: workersLoading, error: workersError } = useNotAssignedWorkers(currentWorkerId);
 
   // Fetch roles using the custom hook
   const { roles, loading: rolesLoading, error: rolesError } = useRoles();
@@ -70,7 +127,29 @@ const UserTable: React.FC<UserTableProps> = ({
   }, [editingUserId]);
 
   if (loading) {
-    return <p>Loading users...</p>;
+    return (
+      <div className="overflow-x-auto px-5 pb-5">
+        <table className="min-w-full bg-white shadow-md rounded-lg">
+          <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+            <tr>
+              <th className="py-3 px-6 text-center">ID</th>
+              <th className="py-3 px-6 text-center">Username</th>
+              <th className="py-3 px-6 text-center">Temporary Password</th>
+              {withTempPass || <th className="py-3 px-6 text-center">First Name</th>}
+              {withTempPass || <th className="py-3 px-6 text-center">Last Name</th>}
+              {withTempPass || <th className="py-3 px-6 text-center">Role</th>}
+              {withTempPass || <th className="py-3 px-6 text-center">Department</th>}
+              {editMode && <th className="py-3 px-6 text-center">Actions</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonRow key={index} columns={editMode ? 8 : 7} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   }
   if (error) {
     return <p className="text-red-500">{error}</p>;
@@ -87,7 +166,7 @@ const UserTable: React.FC<UserTableProps> = ({
   // Convert workers to options for react-select
   const workerOptions: WorkerOption[] = workers.map((worker) => ({
     value: worker.id,
-    label: `${worker.first_name} ${worker.last_name}`,
+    label: `${worker.last_name} ${worker.first_name}`,
   }));
 
   // Convert roles to options for react-select
@@ -100,6 +179,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleEdit = (user: User) => {
     // Enable inline editing for the selected user
     setEditingUserId(user.id);
+    setEditingUserUsername(user.username);
     setEditFormData({ ...user });
     setCurrentWorkerId(user.worker_id); // Include current worker's ID
   };
@@ -143,7 +223,7 @@ const UserTable: React.FC<UserTableProps> = ({
         role_id: editFormData.role_id,
         worker_id: editFormData.worker_id,
       });
-      toast.success(`User with ID ${editingUserId} updated successfully.`);
+      toast.success(`User with ID ${editingUserId}. ${editingUserUsername} updated successfully.`);
       setEditingUserId(null);
       setEditFormData(null);
       if (onUserUpdated) {
@@ -156,6 +236,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleCancelEdit = () => {
     setEditingUserId(null);
+    setEditingUserUsername(null);
     setEditFormData(null);
   };
 
@@ -225,24 +306,18 @@ const UserTable: React.FC<UserTableProps> = ({
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
           <tr>
-            <th className="py-3 px-6 text-center">ID</th>
-            <th className="py-3 px-6 text-center">Worker</th>
-            <th className="py-3 px-6 text-center">Username</th>
-            <th className="py-3 px-6 text-center">First Name</th>
-            <th className="py-3 px-6 text-center">Last Name</th>
-            <th className="py-3 px-6 text-center">Role</th>
-            <th className="py-3 px-6 text-center">Department</th>
+          <th className="py-3 px-6 text-center">ID</th>
+              <th className="py-3 px-6 text-center">Username</th>
+              {withTempPass ||<th className="py-3 px-6 text-center">Worker ID</th>}
+              {withTempPass || <th className="py-3 px-6 text-center">First Name</th>}
+              {withTempPass || <th className="py-3 px-6 text-center">Last Name</th>}
+              <th className="py-3 px-6 text-center">Role</th>
+              {withTempPass || <th className="py-3 px-6 text-center">Department</th>}
             {editMode && (
               <th className="py-3 px-6 text-center">
                 <div className="flex items-center gap-5 justify-center">
                   <span>Actions</span>
-                  {onAddUser && (
-                    <ButtonComponent
-                      label="Add User"
-                      type={ButtonType.Primary}
-                      onClick={onAddUser}
-                    />
-                  )}
+            
                 </div>
               </th>
             )}
@@ -265,23 +340,6 @@ const UserTable: React.FC<UserTableProps> = ({
                   <>
                     <td className="py-3 px-6 text-center">{user.id}</td>
 
-                    {/* Worker Dropdown */}
-                    <td className="py-3 px-6 text-center">
-                      <Select
-                        options={workerOptions}
-                        value={
-                          workerOptions.find(
-                            (option) => option.value === editFormData.worker_id
-                          ) || null
-                        }
-                        onChange={handleEditChangeWorker}
-                        isLoading={workersLoading}
-                        isClearable
-                        placeholder="Select Worker"
-                        className="w-full"
-                      />
-                    </td>
-
                     {/* Username Input */}
                     <td className="py-3 px-6 text-center">
                       <input
@@ -293,36 +351,57 @@ const UserTable: React.FC<UserTableProps> = ({
                       />
                     </td>
 
+                    {/* Worker Dropdown */}
+                    <td className="py-3 px-6 text-center">
+                    <Select
+                      options={workerOptions}
+                      value={
+                        workerOptions.find(
+                          (option) => option.value === editFormData.worker_id
+                        ) || null
+                      }
+                      onChange={handleEditChangeWorker}
+                      isLoading={workersLoading}
+                      isClearable
+                      placeholder="Select Worker"
+                      className="w-full"
+                      menuPortalTarget={document.body}
+                      styles={customSelectStyles}
+                    />
+                    </td>
+
                     {/* First Name */}
-                    <td className="py-3 px-6 text-center">{user.first_name}</td>
+                    {withTempPass || <td className="py-3 px-6 text-center">{user.first_name}</td>}
 
                     {/* Last Name */}
-                    <td className="py-3 px-6 text-center">{user.last_name}</td>
+                    {withTempPass || <td className="py-3 px-6 text-center">{user.last_name}</td>}
 
                     {/* Role Dropdown */}
-                    <td className="py-3 px-6 text-center">
-                      <Select
-                        options={roleOptions}
-                        value={
-                          roleOptions.find(
-                            (option) => option.value === editFormData.role_id
-                          ) || null
-                        }
-                        onChange={handleEditChangeRole}
-                        isLoading={rolesLoading}
-                        isClearable
-                        placeholder="Select Role"
-                        className="w-full"
-                      />
-                    </td>
+                    {withTempPass || <td className="py-3 px-6 text-center">
+                    <Select
+                      options={roleOptions}
+                      value={
+                        roleOptions.find(
+                          (option) => option.value === editFormData.role_id
+                        ) || null
+                      }
+                      onChange={handleEditChangeRole}
+                      isLoading={rolesLoading}
+                      isClearable
+                      placeholder="Select Role"
+                      className="w-full"
+                      menuPortalTarget={document.body}
+                      styles={customSelectStyles}
+                    />
+                    </td>}
 
                     {/* Department Name */}
-                    <td className="py-3 px-6 text-center">
+                    {withTempPass || <td className="py-3 px-6 text-center">
                       {user.department_name}
-                    </td>
+                    </td>}
 
                     {/* Action Buttons */}
-                    <td className="py-3 px-6 text-center">
+                    {withTempPass || <td className="py-3 px-6 text-center">
                       <div className="flex space-x-2 justify-center">
                         <ButtonComponent
                           label="Save"
@@ -335,19 +414,19 @@ const UserTable: React.FC<UserTableProps> = ({
                           onClick={handleCancelEdit}
                         />
                       </div>
-                    </td>
+                    </td>}
                   </>
                 ) : (
                   <>
                     <td className="py-3 px-6 text-center">{user.id}</td>
-                    <td className="py-3 px-6 text-center">{user.worker_id}</td>
                     <td className="py-3 px-6 text-center">{user.username}</td>
-                    <td className="py-3 px-6 text-center">{user.first_name}</td>
-                    <td className="py-3 px-6 text-center">{user.last_name}</td>
+                    {withTempPass || <td className="py-3 px-6 text-center">{user.worker_id}</td>}
+                    {withTempPass || <td className="py-3 px-6 text-center">{user.first_name}</td>}
+                    {withTempPass || <td className="py-3 px-6 text-center">{user.last_name}</td>}
                     <td className="py-3 px-6 text-center">{user.role_name}</td>
-                    <td className="py-3 px-6 text-center">
+                    {withTempPass || <td className="py-3 px-6 text-center">
                       {user.department_name}
-                    </td>
+                    </td>}
                     {editMode && (
                       <td className="py-3 px-6 text-center">
                         <div className="flex space-x-2 justify-center">

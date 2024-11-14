@@ -9,6 +9,7 @@ import { handleAxiosError } from '../utils/handleAxiosError';
 import { ButtonType } from '../enums/ButtonType';
 import { ButtonComponent } from '../components/ButtonComponent';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { set } from 'react-hook-form';
 
 interface PermissionOption {
   value: number;
@@ -113,6 +114,8 @@ const Roles: React.FC = () => {
       setRoleToDelete(null);
       refetchRoles(); // Refresh the roles list
     } catch (error: unknown) {
+      setIsModalOpen(false);
+      setRoleToDelete(null);
       handleAxiosError(error);
     }
   };

@@ -78,6 +78,7 @@ const UsersWithTemporaryPassword: React.FC = () => {
         paginationData={paginationData}
         onPageChange={handlePageChange}
         editMode={false}
+        withTempPass={true}
       />
     </div>
   );

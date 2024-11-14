@@ -2,7 +2,6 @@
 export interface RegisterUser {
     username: string;
     worker_id: number;
-    password: string;
-    roles: string[];
+    role_id: number;
   }
   
