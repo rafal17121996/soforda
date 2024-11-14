@@ -38,7 +38,7 @@ interface UseDepartmentsReturn {
   deleteDepartment: (id: number) => Promise<void>;
 }
 
-export const useDepartments = (): UseDepartmentsReturn => {
+export const useDepartments = (isActive : boolean): UseDepartmentsReturn => {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +52,7 @@ export const useDepartments = (): UseDepartmentsReturn => {
           format: 'json',
           page: 1, // Dostosuj w razie potrzeby
           size: 100, // Dostosuj w razie potrzeby
+          is_active: isActive
         },
       });
 
@@ -70,7 +71,7 @@ export const useDepartments = (): UseDepartmentsReturn => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isActive]);
 
   useEffect(() => {
     fetchDepartments();

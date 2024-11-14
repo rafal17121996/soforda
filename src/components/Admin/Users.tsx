@@ -5,7 +5,6 @@ import AddUserForm from "./AddUserForm";
 import api from "../../api/axiosConfig";
 import { PaginationData } from "../../types/PaginationData";
 import { ComponentName } from "../ComponentName";
-import { Switch } from "../Switch";
 import { ExportButton } from "../ExportButton";
 import { UserResponse } from "../../types/UserResponse";
 import UserTable from "./UserTable";
@@ -16,7 +15,6 @@ export const Users: React.FC = () => {
   const [tempSearch, setTempSearch] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [editMode, setEditMode] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [paginationData, setPaginationData] = useState<PaginationData>({

@@ -3,15 +3,15 @@ import React, { useState } from "react";
 import { Worker } from "../../types/Worker";
 import DrivingLicenseTab from "./Details/DrivingLicenseTab";
 import PayrollDetailsTab from "./Details/PayrollDetailsTab";
-import DepartmentTab from "./Details/DepartmentTab";
-import { DetailsMainInfo } from "./Details/DetailsMainInfo";
+import DriverCardTab from "./Details/DriverCardTab";
 import { Tabs } from "./Details/Tabs";
+import { EmploymentTab } from "./Details/EmploymentTab";
 
 interface PropsDetails {
   worker: Worker;
 }
 
-export type Tab = "driving_license" | "payroll_details" | "department";
+export type Tab = "driving_license" | "payroll_details" | "driver_card" | "employment";
 
 export const Details: React.FC<PropsDetails> = ({ worker }) => {
   const [activeTab, setActiveTab] = useState<Tab>("driving_license");
@@ -19,11 +19,13 @@ export const Details: React.FC<PropsDetails> = ({ worker }) => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "driving_license":
-        return <DrivingLicenseTab workerId={worker.id} />;
+        return <DrivingLicenseTab drivingLicense={worker.driving_license} />;
       case "payroll_details":
-        return <PayrollDetailsTab workerId={worker.id} />;
-      case "department":
-        return <DepartmentTab workerId={worker.id} />;
+        return <PayrollDetailsTab payrollDetail={worker.payroll_detail} />;
+      case "driver_card":
+        return <DriverCardTab driverCards={worker.driver_card} />;
+      case "employment":
+        return <EmploymentTab  />;
       default:
         return null;
     }
@@ -31,13 +33,6 @@ export const Details: React.FC<PropsDetails> = ({ worker }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
-      {/* Nagłówek */}
-      <h2 className="text-2xl font-semibold mb-4">Szczegóły Pracownika</h2>
-
-      {/* Podstawowe Informacje */}
-      <DetailsMainInfo worker={worker} />
-
-      {/* Zakładki */}
       <Tabs renderTabContent={renderTabContent} activeTab={activeTab} setActiveTab= {setActiveTab}/>
     </div>
   );

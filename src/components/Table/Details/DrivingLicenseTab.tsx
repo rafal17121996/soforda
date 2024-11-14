@@ -1,59 +1,67 @@
 // src/components/DrivingLicenseTab.tsx
-import React, { useEffect, useState } from 'react';
-import { DrivingLicense } from '../../../types/Worker';
-import api from '../../../api/axiosConfig';
 
+import React from 'react';
+import { DrivingLicense } from '../../../types/Worker';
 
 interface DrivingLicenseTabProps {
-  workerId: number;
+  drivingLicense: DrivingLicense[];
 }
 
-const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({ workerId }) => {
-  const [drivingLicense, setDrivingLicense] = useState<DrivingLicense | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchDrivingLicense = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await api.get<DrivingLicense>(`/driving_license/${workerId}`);
-        setDrivingLicense(response.data);
-      } catch (err: unknown) {
-        console.error('Error fetching Driving License data:', err);
-        setError('Błąd podczas pobierania danych prawa jazdy.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDrivingLicense();
-  }, [workerId]);
-
-  if (loading) {
-    return <p className="text-center">Ładowanie danych prawa jazdy...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
-  }
-
-  if (!drivingLicense) {
-    return <p className="text-center">Brak danych prawa jazdy.</p>;
+const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({ drivingLicense }) => {
+  if (drivingLicense.length === 0) {
+    return <p>Brak danych dotyczących prawa jazdy.</p>;
   }
 
   return (
-    <div>
-      <p>
-        <strong>Typ Prawa Jazdy:</strong> {drivingLicense.licenseType}
-      </p>
-      <p>
-        <strong>Data Wydania:</strong> {drivingLicense.issuedDate}
-      </p>
-      <p>
-        <strong>Data Wygaśnięcia:</strong> {drivingLicense.expiryDate}
-      </p>
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+          <tr>
+            <th className="py-3 px-6 text-left">ID</th>
+            <th className="py-3 px-6 text-left">Kraj</th>
+            <th className="py-3 px-6 text-left">Numer Prawa Jazdy</th>
+            <th className="py-3 px-6 text-left">Typy Prawa Jazdy</th>
+            <th className="py-3 px-6 text-left">Data Wydania</th>
+            <th className="py-3 px-6 text-left">Data Wygaśnięcia</th>
+            <th className="py-3 px-6 text-left">Data Wygaśnięcia Kodu 95</th>
+            <th className="py-3 px-6 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-600 text-sm font-light">
+          {drivingLicense.map((dl) => (
+            <tr key={dl.id} className="border-b border-gray-200 hover:bg-gray-100">
+              <td className="py-3 px-6 text-left">{dl.id}</td>
+              <td className="py-3 px-6 text-left">{dl.country}</td>
+              <td className="py-3 px-6 text-left">{dl.number}</td>
+              <td className="py-3 px-6 text-left">
+                {dl.license_types.join(', ')}
+              </td>
+              <td className="py-3 px-6 text-left">
+                {new Date(dl.date_issued).toLocaleDateString()}
+              </td>
+              <td className="py-3 px-6 text-left">
+                {new Date(dl.valid_until).toLocaleDateString()}
+              </td>
+              <td className="py-3 px-6 text-left">
+                {dl.code_95_valid_until
+                  ? new Date(dl.code_95_valid_until).toLocaleDateString()
+                  : 'Brak'}
+              </td>
+              <td className="py-3 px-6 text-left">
+                {dl.active ? (
+                  <span className="flex items-center text-green-500">
+                    Aktywny
+                  </span>
+                ) : (
+                  <span className="flex items-center text-red-500">
+                    Nieaktywny
+                  </span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -10,6 +10,10 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   const auth = useSelector((state: RootState) => state.auth);
+
+  console.log("auth")
+  console.log(auth)
+  console.log("auth")
   
   if (!auth.isAuthenticated) {
     return <Navigate to="/login" replace />;

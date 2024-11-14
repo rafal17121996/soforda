@@ -37,9 +37,9 @@ export const Table: React.FC<PropsTable> = ({ workers, onEdit, onDelete }) => {
   }
 
   return (
-    <table className="min-w-full bg-white mt-4 mb-4">
-      <thead>
-        <tr>
+    <table className="min-w-full bg-white shadow-md rounded-lg">
+    <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+      <tr>
           <th className="py-2 px-4 border-b">ID</th>
           <th className="py-2 px-4 border-b">Imię</th>
           <th className="py-2 px-4 border-b">Drugie Imię</th>

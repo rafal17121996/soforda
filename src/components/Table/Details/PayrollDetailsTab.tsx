@@ -1,59 +1,58 @@
-// src/components/PayrollDetailsTab.tsx
-import React, { useEffect, useState } from 'react';
-import { PayrollDetails } from '../../../types/Worker';
-import api from '../../../api/axiosConfig';
-
+import { PayrollDetail } from "../../../types/Worker";
 
 interface PayrollDetailsTabProps {
-  workerId: number;
+  payrollDetail: PayrollDetail;
 }
 
-const PayrollDetailsTab: React.FC<PayrollDetailsTabProps> = ({ workerId }) => {
-  const [payrollDetails, setPayrollDetails] = useState<PayrollDetails | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPayrollDetails = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await api.get<PayrollDetails>(`/payroll_details/${workerId}`);
-        setPayrollDetails(response.data);
-      } catch (err: unknown) {
-        console.error('Error fetching Payroll Details data:', err);
-        setError('Błąd podczas pobierania danych płacowych.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPayrollDetails();
-  }, [workerId]);
-
-  if (loading) {
-    return <p className="text-center">Ładowanie danych płacowych...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
-  }
-
-  if (!payrollDetails) {
-    return <p className="text-center">Brak danych płacowych.</p>;
-  }
-
+const PayrollDetailsTab: React.FC<PayrollDetailsTabProps> = ({ payrollDetail }) => {
   return (
-    <div>
-      <p>
-        <strong>Wynagrodzenie:</strong> {payrollDetails.salary} PLN
-      </p>
-      <p>
-        <strong>Premia:</strong> {payrollDetails.bonus} PLN
-      </p>
-      <p>
-        <strong>Potrącenia:</strong> {payrollDetails.deductions} PLN
-      </p>
+    <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+      <div className="flex items-center mb-4">
+        <h2 className="text-2xl font-semibold">Szczegóły Wynagrodzenia</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Adres */}
+        <div>
+          <strong className="text-gray-700">Adres:</strong>
+          <p className="text-gray-600">{payrollDetail.address}</p>
+        </div>
+
+        {/* Narodowość */}
+        <div>
+          <strong className="text-gray-700">Narodowość:</strong>
+          <p className="text-gray-600">{payrollDetail.nationality}</p>
+        </div>
+
+        {/* Klasa podatkowa */}
+        <div>
+          <strong className="text-gray-700">Klasa Podatkowa:</strong>
+          <p className="text-gray-600">{payrollDetail.tax_class}</p>
+        </div>
+
+        {/* Ulga podatkowa na dzieci */}
+        <div>
+          <strong className="text-gray-700">Ulga Podatkowa na Dzieci:</strong>
+          <p className="text-gray-600">{payrollDetail.children_tax_allowance}</p>
+        </div>
+
+        {/* Numer identyfikacji podatkowej */}
+        <div>
+          <strong className="text-gray-700">Numer Identyfikacji Podatkowej:</strong>
+          <p className="text-gray-600">{payrollDetail.tax_id_number}</p>
+        </div>
+
+        {/* Numer ubezpieczenia społecznego */}
+        <div>
+          <strong className="text-gray-700">Numer Ubezpieczenia Społecznego:</strong>
+          <p className="text-gray-600">{payrollDetail.social_security_number}</p>
+        </div>
+
+        {/* Dostawca ubezpieczenia zdrowotnego */}
+        <div>
+          <strong className="text-gray-700">Dostawca Ubezpieczenia Zdrowotnego:</strong>
+          <p className="text-gray-600">{payrollDetail.health_insurance_provider}</p>
+        </div>
+      </div>
     </div>
   );
 };

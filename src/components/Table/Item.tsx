@@ -22,36 +22,35 @@ export const Item: React.FC<PropsItem> = ({
   return (
     <React.Fragment key={worker.id}>
       <tr>
-        <td className="py-2 px-4 border-b">{worker.id}</td>
-        <td className="py-2 px-4 border-b">{worker.first_name}</td>
-        <td className="py-2 px-4 border-b">{worker.middle_name || "-"}</td>
-        <td className="py-2 px-4 border-b">{worker.last_name}</td>
-        <td className="py-2 px-4 border-b">{worker.birthday}</td>
-        <td className="py-2 px-4 border-b">{worker.department_name}</td>
-        <td className="py-2 px-4 border-b space-x-2">
-          <ButtonComponent
-            label="Details"
-            type={ButtonType.Info}
-            onClick={() => toggleRow(worker.id, "details")}
-          />
-          <ButtonComponent
-            label="Employment"
-            type={ButtonType.Secondary}
-            onClick={() => toggleRow(worker.id, "employment")}
-          />
-          <ButtonComponent
-            label="Edit"
-            type={ButtonType.Primary}
-            onClick={() => onEdit(worker)}
-          />
-          <ButtonComponent
-            label="Delete"
-            type={ButtonType.Danger}
-            onClick={() => onDelete(worker)}
-          />
+        <td className="py-2 px-4 border-b text-center">{worker.id}</td>
+        <td className="py-2 px-4 border-b text-center">{worker.first_name}</td>
+        <td className="py-2 px-4 border-b text-center">{worker.middle_name || "-"}</td>
+        <td className="py-2 px-4 border-b text-center">{worker.last_name}</td>
+        <td className="py-2 px-4 border-b text-center">{worker.birthday}</td>
+        <td className="py-2 px-4 border-b text-center">{worker.department_name}</td>
+        <td className="py-2 px-4 border-b space-x-2 text-center">
+          <div className="flex gap-2 justify-center">
+            <ButtonComponent
+              label="Details"
+              type={ButtonType.Info}
+              onClick={() => toggleRow(worker.id, "details")}
+            />
+            <ButtonComponent
+              label="Edit"
+              type={ButtonType.Primary}
+              onClick={() => onEdit(worker)}
+            />
+            <ButtonComponent
+              label="Delete"
+              type={ButtonType.Danger}
+              onClick={() => onDelete(worker)}
+            />
+          </div>
         </td>
       </tr>
-      {expandedRows[worker.id] && <ExpandedRows expandedRows={expandedRows} worker={worker}/>}
+      {expandedRows[worker.id] && (
+        <ExpandedRows expandedRows={expandedRows} worker={worker} />
+      )}
     </React.Fragment>
   );
 };

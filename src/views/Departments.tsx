@@ -1,11 +1,12 @@
 // src/components/Departments.tsx
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import { ButtonType } from '../enums/ButtonType';
-import { handleAxiosError } from '../utils/handleAxiosError';
-import { ButtonComponent } from '../components/ButtonComponent';
-import ConfirmationModal from '../components/ConfirmationModal';
-import { useDepartments } from '../hooks/useDepartments';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { ButtonType } from "../enums/ButtonType";
+import { handleAxiosError } from "../utils/handleAxiosError";
+import { ButtonComponent } from "../components/ButtonComponent";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { useDepartments } from "../hooks/useDepartments";
+import { Switch } from "../components/Switch";
 
 interface Department {
   id: number;
@@ -23,21 +24,36 @@ interface Worker {
 }
 
 const Departments: React.FC = () => {
-  const { departments, loading, error, addDepartment, updateDepartment, deleteDepartment } = useDepartments();
 
-  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(null);
+  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(
+    null
+  );
   const [editFormData, setEditFormData] = useState<{
     name: string;
     is_active: boolean;
-  }>({ name: '', is_active: true });
+  }>({ name: "", is_active: true });
+
+  const [isActive, setIsActive] = useState<boolean>(true)
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(
+    null
+  );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [createFormData, setCreateFormData] = useState<{
     name: string;
-  }>({ name: '' });
+  }>({ name: "" });
+
+
+  const {
+    departments,
+    loading,
+    error,
+    addDepartment,
+    updateDepartment,
+    deleteDepartment,
+  } = useDepartments(isActive);
 
   if (loading) {
     return (
@@ -67,7 +83,11 @@ const Departments: React.FC = () => {
   }
 
   if (error) {
-    return <p className="text-red-500">Błąd podczas ładowania departamentów: {error}</p>;
+    return (
+      <p className="text-red-500">
+        Błąd podczas ładowania departamentów: {error}
+      </p>
+    );
   }
 
   // Handlers for Editing a Department
@@ -78,21 +98,21 @@ const Departments: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditingDepartmentId(null);
-    setEditFormData({ name: '', is_active: true });
+    setEditFormData({ name: "", is_active: true });
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setEditFormData(prev => ({
+    setEditFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSave = async (id: number) => {
     // Podstawowa walidacja
-    if (editFormData.name.trim() === '') {
-      toast.error('Nazwa departamentu nie może być pusta.');
+    if (editFormData.name.trim() === "") {
+      toast.error("Nazwa departamentu nie może być pusta.");
       return;
     }
 
@@ -103,7 +123,7 @@ const Departments: React.FC = () => {
         deactivate: deactivate,
       });
       setEditingDepartmentId(null);
-      setEditFormData({ name: '', is_active: true });
+      setEditFormData({ name: "", is_active: true });
     } catch (err: unknown) {
       handleAxiosError(err);
     }
@@ -135,12 +155,12 @@ const Departments: React.FC = () => {
   // Handlers for Creating a Department
   const handleOpenCreateModal = () => {
     setIsCreateModalOpen(true);
-    setCreateFormData({ name: '' });
+    setCreateFormData({ name: "" });
   };
 
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
-    setCreateFormData({ name: '' });
+    setCreateFormData({ name: "" });
   };
 
   const handleCreateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,8 +169,8 @@ const Departments: React.FC = () => {
 
   const handleCreateDepartment = async () => {
     // Podstawowa walidacja
-    if (createFormData.name.trim() === '') {
-      toast.error('Nazwa departamentu nie może być pusta.');
+    if (createFormData.name.trim() === "") {
+      toast.error("Nazwa departamentu nie może być pusta.");
       return;
     }
 
@@ -163,6 +183,10 @@ const Departments: React.FC = () => {
       handleAxiosError(err);
     }
   };
+
+  const handleSwitch = () => {
+    setIsActive((prev) => !prev)
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -184,7 +208,13 @@ const Departments: React.FC = () => {
             <th className="py-3 px-6 text-center">Nazwa</th>
             <th className="py-3 px-6 text-center">Liczba Pracowników</th>
             <th className="py-3 px-6 text-center">Aktywny</th>
-            <th className="py-3 px-6 text-center">Akcje</th>
+
+            <th className="py-3 px-6 text-center">
+              <div className="flex text-center justify-center gap-2">
+                Akcje
+                <Switch switchValue={isActive} handleSwitch={handleSwitch}/>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light">
@@ -196,7 +226,10 @@ const Departments: React.FC = () => {
             </tr>
           ) : (
             departments.map((department: Department) => (
-              <tr key={department.id} className="border-b border-gray-200 hover:bg-gray-100">
+              <tr
+                key={department.id}
+                className="border-b border-gray-200 hover:bg-gray-100"
+              >
                 <td className="py-3 px-6 text-center">{department.id}</td>
                 <td className="py-3 px-6 text-center">
                   {editingDepartmentId === department.id ? (
@@ -211,7 +244,9 @@ const Departments: React.FC = () => {
                     department.name
                   )}
                 </td>
-                <td className="py-3 px-6 text-center">{department.workers_count}</td>
+                <td className="py-3 px-6 text-center">
+                  {department.workers_count}
+                </td>
                 <td className="py-3 px-6 text-center">
                   {editingDepartmentId === department.id ? (
                     <input
@@ -279,9 +314,14 @@ const Departments: React.FC = () => {
       {isCreateModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <h3 className="text-xl font-semibold mb-4">Dodaj Nowy Departament</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              Dodaj Nowy Departament
+            </h3>
             <div className="mb-4">
-              <label htmlFor="department-name" className="block text-gray-700 mb-2">
+              <label
+                htmlFor="department-name"
+                className="block text-gray-700 mb-2"
+              >
                 Nazwa Departamentu
               </label>
               <input

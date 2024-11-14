@@ -11,46 +11,47 @@ import { handleAxiosError } from "../../utils/handleAxiosError";
 import ConfirmationModal from "../ConfirmationModal";
 import { useNotAssignedWorkers } from "../../hooks/useNotAssignedWorkers"; // Import the custom hook
 import { useRoles } from "../../hooks/useRoles"; // Import the roles hook
-import Select, { SingleValue } from "react-select"; // Import react-select
+import Select, { SingleValue, StylesConfig } from "react-select"; // Import react-select
 import { Skeleton } from "@mui/material";
 
-const customSelectStyles = {
-  control: (base: any) => ({
+
+const customSelectStyles: StylesConfig<WorkerOption | RoleOption, false> = {
+  control: (base) => ({
     ...base,
     minHeight: '30px',
     height: '30px',
     fontSize: '12px',
   }),
-  indicatorsContainer: (base: any) => ({
+  indicatorsContainer: (base) => ({
     ...base,
     height: '30px',
   }),
-  valueContainer: (base: any) => ({
+  valueContainer: (base) => ({
     ...base,
     height: '30px',
     padding: '0 6px',
   }),
-  input: (base: any) => ({
+  input: (base) => ({
     ...base,
     margin: '0px',
     padding: '0px',
     fontSize: '12px',
   }),
-  placeholder: (base: any) => ({
+  placeholder: (base) => ({
     ...base,
     fontSize: '12px',
   }),
-  menu: (base: any) => ({
+  menu: (base) => ({
     ...base,
     fontSize: '12px',
     zIndex: 9999,
   }),
-  menuList: (base: any) => ({
+  menuList: (base) => ({
     ...base,
     padding: '0px',
     maxHeight: '150px',
   }),
-  option: (base: any, state: any) => ({
+  option: (base, state) => ({
     ...base,
     padding: '6px 12px',
     fontSize: '12px',
@@ -58,7 +59,6 @@ const customSelectStyles = {
     color: 'black',
   }),
 };
-
 interface WorkerOption {
   value: number;
   label: string;
