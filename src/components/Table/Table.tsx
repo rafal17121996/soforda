@@ -41,7 +41,9 @@ export const Table: React.FC<PropsTable> = ({ workers, onEdit, onDelete }) => {
     <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
       <tr>
           <th className="py-2 px-4 border-b">ID</th>
-          <th className="py-2 px-4 border-b">Imię</th>
+          <th className="py-2 px-4 border-b">
+            
+          </th>
           <th className="py-2 px-4 border-b">Drugie Imię</th>
           <th className="py-2 px-4 border-b">Nazwisko</th>
           <th className="py-2 px-4 border-b">Data Urodzenia</th>
