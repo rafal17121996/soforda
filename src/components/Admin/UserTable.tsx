@@ -436,17 +436,20 @@ const UserTable: React.FC<UserTableProps> = ({
                         <div className="flex space-x-2 justify-center">
                           <ButtonComponent
                             label="Edit"
-                            type={ButtonType.Secondary}
+                            className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
+                            type={ButtonType.Icon}
                             onClick={() => handleEdit(user)}
                           />
                           <ButtonComponent
                             label="Temp Pass"
-                            type={ButtonType.Warning}
+                            className="text-green-600 group-hover:bg-green-600 group-hover:text-white"
+                            type={ButtonType.Icon}
                             onClick={() => handleTempPass(user.id)}
                           />
                           <ButtonComponent
                             label="Delete"
-                            type={ButtonType.Danger}
+                            type={ButtonType.Icon}
+                            className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
                             onClick={() => confirmDelete(user.id)} // Open confirmation modal
                           />
                         </div>

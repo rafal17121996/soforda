@@ -24,7 +24,6 @@ interface WorkersResponse {
 const Workers: React.FC = () => {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -50,10 +49,7 @@ const Workers: React.FC = () => {
         setPage(response.data.page);
         setSize(response.data.size);
         setPages(response.data.pages);
-        setError("");
       } catch (err: unknown) {
-        const errorMessage = getErrorMessage(err);
-        setError(errorMessage);
         handleAxiosError(err);
       } finally {
         setLoading(false);

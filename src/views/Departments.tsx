@@ -25,7 +25,9 @@ interface Worker {
 }
 
 const Departments: React.FC = () => {
-  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(null);
+  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(
+    null
+  );
   const [editFormData, setEditFormData] = useState<{
     name: string;
     is_active: boolean;
@@ -34,7 +36,9 @@ const Departments: React.FC = () => {
   const [isActive, setIsActive] = useState<boolean>(true);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(
+    null
+  );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [createFormData, setCreateFormData] = useState<{
@@ -209,6 +213,7 @@ const Departments: React.FC = () => {
         <div className="flex items-center space-x-4">
           <ButtonComponent
             label="Dodaj Departament"
+            text="Add Depertment"
             type={ButtonType.Primary}
             onClick={handleOpenCreateModal}
           />
@@ -295,13 +300,15 @@ const Departments: React.FC = () => {
                   ) : (
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
-                        label="Edytuj"
-                        type={ButtonType.Primary}
+                        label="Edit"
+                        className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleEditClick(department)}
                       />
                       <ButtonComponent
-                        label="Usuń"
-                        type={ButtonType.Danger}
+                        label="Delete"
+                        className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleDeleteClick(department.id)}
                       />
                     </div>
@@ -354,17 +361,25 @@ const Departments: React.FC = () => {
                 placeholder="Wprowadź nazwę departamentu"
               />
             </div>
-            <div className="flex justify-end space-x-4">
-              <ButtonComponent
-                label="Anuluj"
-                type={ButtonType.Secondary}
-                onClick={handleCloseCreateModal}
-              />
-              <ButtonComponent
-                label="Dodaj"
-                type={ButtonType.Success}
-                onClick={handleCreateDepartment}
-              />
+            <div className="mt-8 p-6 pt-0">
+              <div className="flex space-x-2">
+                <button
+                  className="w-full mx-auto select-none rounded border border-red-600 py-2 px-4 text-center text-sm font-semibold text-red-600 transition-all hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-600/20 active:bg-red-700 active:text-white active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                  data-dialog-close="true"
+                  onClick={handleCloseCreateModal}
+                >
+                  Zamknij
+                </button>
+                <button
+                  className="w-full mx-auto select-none rounded bg-slate-800 py-2 px-4 text-center text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  onClick={handleCreateDepartment}
+                  type="button"
+                  data-dialog-close="true"
+                >
+                  Zapisz
+                </button>
+              </div>
             </div>
           </div>
         </div>

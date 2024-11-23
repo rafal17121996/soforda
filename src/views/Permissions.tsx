@@ -14,14 +14,22 @@ interface Permission {
 }
 
 const Permissions: React.FC = () => {
-  const [editingPermissionId, setEditingPermissionId] = useState<number | null>(null);
-  const [editFormData, setEditFormData] = useState<{ name: string }>({ name: "" });
+  const [editingPermissionId, setEditingPermissionId] = useState<number | null>(
+    null
+  );
+  const [editFormData, setEditFormData] = useState<{ name: string }>({
+    name: "",
+  });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [permissionToDelete, setPermissionToDelete] = useState<number | null>(null);
+  const [permissionToDelete, setPermissionToDelete] = useState<number | null>(
+    null
+  );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-  const [createFormData, setCreateFormData] = useState<{ name: string }>({ name: "" });
+  const [createFormData, setCreateFormData] = useState<{ name: string }>({
+    name: "",
+  });
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -169,9 +177,7 @@ const Permissions: React.FC = () => {
 
   if (error) {
     return (
-      <p className="text-red-500">
-        Błąd podczas ładowania uprawnień: {error}
-      </p>
+      <p className="text-red-500">Błąd podczas ładowania uprawnień: {error}</p>
     );
   }
 
@@ -182,6 +188,7 @@ const Permissions: React.FC = () => {
         <h2 className="text-2xl font-semibold">Zarządzanie Uprawnieniami</h2>
         <ButtonComponent
           label="Dodaj Uprawnienie"
+          text="Dodaj Uprawnienie"
           type={ButtonType.Primary}
           onClick={handleOpenCreateModal}
         />
@@ -240,13 +247,15 @@ const Permissions: React.FC = () => {
                   ) : (
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
-                        label="Edytuj"
-                        type={ButtonType.Primary}
+                        label="Edit"
+                        className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleEditClick(permission)}
                       />
                       <ButtonComponent
-                        label="Usuń"
-                        type={ButtonType.Danger}
+                        label="Delete"
+                        className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleDeleteClick(permission.id)}
                       />
                     </div>
@@ -299,17 +308,25 @@ const Permissions: React.FC = () => {
                 placeholder="Wprowadź nazwę uprawnienia"
               />
             </div>
-            <div className="flex justify-end space-x-4">
-              <ButtonComponent
-                label="Anuluj"
-                type={ButtonType.Secondary}
-                onClick={handleCloseCreateModal}
-              />
-              <ButtonComponent
-                label="Dodaj"
-                type={ButtonType.Success}
-                onClick={handleCreatePermission}
-              />
+            <div className="mt-8 p-6 pt-0">
+              <div className="flex space-x-2">
+                <button
+                  className="w-full mx-auto select-none rounded border border-red-600 py-2 px-4 text-center text-sm font-semibold text-red-600 transition-all hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-600/20 active:bg-red-700 active:text-white active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                  data-dialog-close="true"
+                  onClick={handleCloseCreateModal}
+                >
+                  Zamknij
+                </button>
+                <button
+                  className="w-full mx-auto select-none rounded bg-slate-800 py-2 px-4 text-center text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  onClick={handleCreatePermission}
+                  type="button"
+                  data-dialog-close="true"
+                >
+                  Zapisz
+                </button>
+              </div>
             </div>
           </div>
         </div>

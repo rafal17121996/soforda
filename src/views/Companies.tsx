@@ -184,6 +184,7 @@ const Companies: React.FC = () => {
         <h2 className="text-2xl font-semibold">Companies Management</h2>
         <ButtonComponent
           label="Add Company"
+          text='Add Company'
           type={ButtonType.Primary}
           onClick={handleOpenCreateModal}
         />
@@ -261,12 +262,14 @@ const Companies: React.FC = () => {
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
                         label="Edit"
-                        type={ButtonType.Primary}
+                        className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleEditClick(company)}
                       />
                       <ButtonComponent
                         label="Delete"
-                        type={ButtonType.Danger}
+                        className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleDeleteClick(company.id)}
                       />
                     </div>
@@ -334,17 +337,25 @@ const Companies: React.FC = () => {
                 placeholder="Enter company address"
               />
             </div>
-            <div className="flex justify-end space-x-4">
-              <ButtonComponent
-                label="Cancel"
-                type={ButtonType.Secondary}
-                onClick={handleCloseCreateModal}
-              />
-              <ButtonComponent
-                label="Add"
-                type={ButtonType.Success}
-                onClick={handleCreateCompany}
-              />
+            <div className="mt-8 p-6 pt-0">
+              <div className="flex space-x-2">
+                <button
+                  className="w-full mx-auto select-none rounded border border-red-600 py-2 px-4 text-center text-sm font-semibold text-red-600 transition-all hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-600/20 active:bg-red-700 active:text-white active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                  data-dialog-close="true"
+                  onClick={handleCloseCreateModal}
+                >
+                  Zamknij
+                </button>
+                <button
+                  className="w-full mx-auto select-none rounded bg-slate-800 py-2 px-4 text-center text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  onClick={handleCreateCompany}
+                  type="button"
+                  data-dialog-close="true"
+                >
+                  Zapisz
+                </button>
+              </div>
             </div>
           </div>
         </div>

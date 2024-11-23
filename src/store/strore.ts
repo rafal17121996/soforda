@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
+import tabReducer from './tabSlice';
+import licenseReducer from './licenseSlice';
+
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    // Dodaj inne reducery tutaj
+    tab: tabReducer,
+    license: licenseReducer
   },
 });
 

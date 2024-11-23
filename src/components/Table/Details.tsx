@@ -1,12 +1,13 @@
 // src/components/Details.tsx
 
-import React, { useState } from "react";
+import React from "react";
 import { Worker } from "../../types/Worker";
 import DrivingLicenseTab from "./Details/DrivingLicenseTab";
 import PayrollDetailsTab from "./Details/PayrollDetailsTab";
 import DriverCardTab from "./Details/DriverCardTab";
 import Tabs from "./Details/Tabs"; // Ensure correct import
 import EmploymentTab from "./Details/EmploymentTab";
+import { useAppSelector } from "../../hooks/useAppDispatch";
 
 interface PropsDetails {
   worker: Worker;
@@ -14,14 +15,9 @@ interface PropsDetails {
   onUpdatePayrollDetails: () => void;
 }
 
-export type Tab =
-  | "driving_license"
-  | "payroll_details"
-  | "driver_card"
-  | "employment";
 
 export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayrollDetails }) => {
-  const [activeTab, setActiveTab] = useState<Tab>("payroll_details");
+  const activeTab = useAppSelector((state) => state.tab.activeTab);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -48,10 +44,8 @@ export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayr
     <div className="bg-white shadow-md rounded-lg p-6">
       <Tabs
         renderTabContent={renderTabContent}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onUpdate={onUpdate}
-        onUpdatePayrollDetails={onUpdatePayrollDetails} // Pass onUpdate to Tabs
+        // onUpdate={onUpdate}
+        // onUpdatePayrollDetails={onUpdatePayrollDetails} // Pass onUpdate to Tabs
       />
     </div>
   );

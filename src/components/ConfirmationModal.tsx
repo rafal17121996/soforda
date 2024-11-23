@@ -5,8 +5,8 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   title: string;
   message: string;
-  onConfirm: () => void;
-  onCancel?: () => void;
+  onConfirm: (e: React.MouseEvent) => void;
+  onCancel?: (e: React.MouseEvent) => void;
   cancel?: boolean;
 }
 
@@ -21,7 +21,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-500">
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 

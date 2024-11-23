@@ -1,12 +1,14 @@
 // src/components/DrivingLicenseTab.tsx
 
 import React, { useState, useEffect, useMemo } from "react";
-import DrivingLicense from "./Mockups/Driving License/DrivingLicense";
+
 import { DrivingLicense as DrivingLicenseType } from "../../../types/Worker";
 import "./DrivingLicenseTab.css";
 import { FaArrowLeft, FaArrowRight, FaPlus } from "react-icons/fa"; // Importing arrow and plus icons
 import api from "../../../api/axiosConfig"; // Ensure you have an axios instance
 import { toast } from "react-toastify";
+import { handleAxiosError } from "../../../utils/handleAxiosError";
+import DrivingLicense from "./Mockups/Driving License/DrivingLicense";
 
 interface DrivingLicenseTabProps {
   drivingLicense: DrivingLicenseType[];
@@ -58,11 +60,6 @@ const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAddLicense = async () => {
-    const confirmAdd = window.confirm(
-      "Are you sure you want to add a new driving license?"
-    );
-    if (!confirmAdd) return;
-
     setIsAdding(true);
     try {
       const payload = { worker_id: workerId };
@@ -70,19 +67,27 @@ const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({
       toast.success("New driving license added successfully.");
       if (onUpdate) onUpdate();
       setIsAdding(false);
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to add new driving license.";
-      console.error("Error adding new driving license:", error);
-      toast.error(`An error occurred: ${errorMessage}`);
-      setIsAdding(false);
+    } catch (error: unknown) {
+      handleAxiosError(error);
     }
   };
 
   // 6. Handle empty license list
   if (sortedDrivingLicenses.length === 0) {
     return (
-      <p className="no-license-text">No driving license data available.</p>
+      <div className="flex flex-col justify-center align-middle">
+        <p className="no-license-text">No driving license data available.</p>
+        <div className="mr-auto ml-auto pt-3">
+          <button
+            onClick={handleAddLicense}
+            className="add-license-button "
+            aria-label="Add New Driving License"
+            disabled={isAdding}
+          >
+            {isAdding ? "..." : <FaPlus />}
+          </button>
+        </div>
+      </div>
     );
   }
 

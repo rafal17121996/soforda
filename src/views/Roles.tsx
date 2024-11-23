@@ -1,14 +1,14 @@
 // src/components/Roles.tsx
-import React, { useState, useEffect } from 'react';
-import { useRoles } from '../hooks/useRoles';
-import { usePermissions } from '../hooks/usePermissionsRole';
-import Select, { MultiValue } from 'react-select';
-import { toast } from 'react-toastify';
-import { handleAxiosError } from '../utils/handleAxiosError';
-import { ButtonType } from '../enums/ButtonType';
-import { ButtonComponent } from '../components/ButtonComponent';
-import ConfirmationModal from '../components/ConfirmationModal';
-import Pagination from '../components/Pagination'; // Ensure this path is correct
+import React, { useState, useEffect } from "react";
+import { useRoles } from "../hooks/useRoles";
+import { usePermissions } from "../hooks/usePermissionsRole";
+import Select, { MultiValue } from "react-select";
+import { toast } from "react-toastify";
+import { handleAxiosError } from "../utils/handleAxiosError";
+import { ButtonType } from "../enums/ButtonType";
+import { ButtonComponent } from "../components/ButtonComponent";
+import ConfirmationModal from "../components/ConfirmationModal";
+import Pagination from "../components/Pagination"; // Ensure this path is correct
 
 interface PermissionOption {
   value: number;
@@ -16,14 +16,27 @@ interface PermissionOption {
 }
 
 const Roles: React.FC = () => {
-  const { roles, loading, error, fetchRoles, addRole, updateRole, deleteRole, totalPages } = useRoles();
-  const { permissions, loading: permissionsLoading, error: permissionsError } = usePermissions();
+  const {
+    roles,
+    loading,
+    error,
+    fetchRoles,
+    addRole,
+    updateRole,
+    deleteRole,
+    totalPages,
+  } = useRoles();
+  const {
+    permissions,
+    loading: permissionsLoading,
+    error: permissionsError,
+  } = usePermissions();
 
   const [editingRoleId, setEditingRoleId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState<{
     name: string;
     permissions: number[];
-  }>({ name: '', permissions: [] });
+  }>({ name: "", permissions: [] });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [roleToDelete, setRoleToDelete] = useState<number | null>(null);
@@ -32,7 +45,7 @@ const Roles: React.FC = () => {
   const [createFormData, setCreateFormData] = useState<{
     name: string;
     permissions: number[];
-  }>({ name: '', permissions: [] });
+  }>({ name: "", permissions: [] });
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -48,34 +61,40 @@ const Roles: React.FC = () => {
   }));
 
   // Handlers for Editing a Role
-  const handleEditClick = (roleId: number, roleName: string, rolePermissions: number[]) => {
+  const handleEditClick = (
+    roleId: number,
+    roleName: string,
+    rolePermissions: number[]
+  ) => {
     setEditingRoleId(roleId);
     setEditFormData({ name: roleName, permissions: rolePermissions });
   };
 
   const handleCancelEdit = () => {
     setEditingRoleId(null);
-    setEditFormData({ name: '', permissions: [] });
+    setEditFormData({ name: "", permissions: [] });
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditFormData({ ...editFormData, name: e.target.value });
   };
 
-  const handleEditPermissionsChange = (selectedOptions: MultiValue<PermissionOption>) => {
+  const handleEditPermissionsChange = (
+    selectedOptions: MultiValue<PermissionOption>
+  ) => {
     const selectedIds = selectedOptions.map((option) => option.value);
     setEditFormData({ ...editFormData, permissions: selectedIds });
   };
 
   const handleSave = async (roleId: number) => {
     // Basic validation
-    if (editFormData.name.trim() === '') {
-      toast.error('Role name cannot be empty.');
+    if (editFormData.name.trim() === "") {
+      toast.error("Role name cannot be empty.");
       return;
     }
 
     if (editFormData.permissions.length === 0) {
-      toast.error('At least one permission must be selected.');
+      toast.error("At least one permission must be selected.");
       return;
     }
 
@@ -85,7 +104,7 @@ const Roles: React.FC = () => {
         permissions: editFormData.permissions,
       });
       setEditingRoleId(null);
-      setEditFormData({ name: '', permissions: [] });
+      setEditFormData({ name: "", permissions: [] });
     } catch (err: unknown) {
       handleAxiosError(err);
     }
@@ -117,32 +136,34 @@ const Roles: React.FC = () => {
   // Handlers for Creating a Role
   const handleOpenCreateModal = () => {
     setIsCreateModalOpen(true);
-    setCreateFormData({ name: '', permissions: [] });
+    setCreateFormData({ name: "", permissions: [] });
   };
 
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
-    setCreateFormData({ name: '', permissions: [] });
+    setCreateFormData({ name: "", permissions: [] });
   };
 
   const handleCreateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCreateFormData({ ...createFormData, name: e.target.value });
   };
 
-  const handleCreatePermissionsChange = (selectedOptions: MultiValue<PermissionOption>) => {
+  const handleCreatePermissionsChange = (
+    selectedOptions: MultiValue<PermissionOption>
+  ) => {
     const selectedIds = selectedOptions.map((option) => option.value);
     setCreateFormData({ ...createFormData, permissions: selectedIds });
   };
 
   const handleCreateRole = async () => {
     // Basic validation
-    if (createFormData.name.trim() === '') {
-      toast.error('Role name cannot be empty.');
+    if (createFormData.name.trim() === "") {
+      toast.error("Role name cannot be empty.");
       return;
     }
 
     if (createFormData.permissions.length === 0) {
-      toast.error('At least one permission must be selected.');
+      toast.error("At least one permission must be selected.");
       return;
     }
 
@@ -191,11 +212,7 @@ const Roles: React.FC = () => {
   }
 
   if (error || permissionsError) {
-    return (
-      <p className="text-red-500">
-        {error || permissionsError}
-      </p>
-    );
+    return <p className="text-red-500">{error || permissionsError}</p>;
   }
 
   return (
@@ -204,6 +221,7 @@ const Roles: React.FC = () => {
         <h2 className="text-2xl font-semibold">Roles Management</h2>
         <ButtonComponent
           label="Create Role"
+          text="Create Role"
           type={ButtonType.Primary}
           onClick={handleOpenCreateModal}
         />
@@ -226,7 +244,10 @@ const Roles: React.FC = () => {
             </tr>
           ) : (
             roles.map((role) => (
-              <tr key={role.id} className="border-b border-gray-200 hover:bg-gray-100">
+              <tr
+                key={role.id}
+                className="border-b border-gray-200 hover:bg-gray-100"
+              >
                 <td className="py-3 px-6 text-center">{role.id}</td>
                 <td className="py-3 px-6 text-center">
                   {editingRoleId === role.id ? (
@@ -253,7 +274,7 @@ const Roles: React.FC = () => {
                       placeholder="Select Permissions"
                     />
                   ) : (
-                    role.permissions.map((perm) => perm.name).join(', ')
+                    role.permissions.map((perm) => perm.name).join(", ")
                   )}
                 </td>
                 <td className="py-3 px-6 text-center">
@@ -274,7 +295,8 @@ const Roles: React.FC = () => {
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
                         label="Edit"
-                        type={ButtonType.Primary}
+                        className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() =>
                           handleEditClick(
                             role.id,
@@ -285,7 +307,8 @@ const Roles: React.FC = () => {
                       />
                       <ButtonComponent
                         label="Delete"
-                        type={ButtonType.Danger}
+                        className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
+                        type={ButtonType.Icon}
                         onClick={() => handleDeleteClick(role.id)}
                       />
                     </div>
@@ -334,7 +357,10 @@ const Roles: React.FC = () => {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="role-permissions" className="block text-gray-700 mb-2">
+              <label
+                htmlFor="role-permissions"
+                className="block text-gray-700 mb-2"
+              >
                 Permissions
               </label>
               <Select
@@ -348,17 +374,25 @@ const Roles: React.FC = () => {
                 placeholder="Select Permissions"
               />
             </div>
-            <div className="flex justify-end space-x-4">
-              <ButtonComponent
-                label="Cancel"
-                type={ButtonType.Secondary}
-                onClick={handleCloseCreateModal}
-              />
-              <ButtonComponent
-                label="Create"
-                type={ButtonType.Success}
-                onClick={handleCreateRole}
-              />
+            <div className="mt-8 p-6 pt-0">
+              <div className="flex space-x-2">
+                <button
+                  className="w-full mx-auto select-none rounded border border-red-600 py-2 px-4 text-center text-sm font-semibold text-red-600 transition-all hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-600/20 active:bg-red-700 active:text-white active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                  data-dialog-close="true"
+                  onClick={handleCloseCreateModal}
+                >
+                  Zamknij
+                </button>
+                <button
+                  className="w-full mx-auto select-none rounded bg-slate-800 py-2 px-4 text-center text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  onClick={handleCreateRole}
+                  type="button"
+                  data-dialog-close="true"
+                >
+                  Zapisz
+                </button>
+              </div>
             </div>
           </div>
         </div>

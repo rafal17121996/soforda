@@ -14,6 +14,7 @@ export const Switch:React.FC<PropsSwitch> = ({switchValue, handleSwitch}) => {
         id="edit-mode-toggle"
         className="sr-only"
         checked={switchValue}
+        onChange={handleSwitch}
       />
       <div
         onClick={handleSwitch}

@@ -41,15 +41,15 @@ export const useRoles = (): UseRolesReturn => {
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  const fetchRoles = useCallback(async (page: number, size: number) => {
+  console.log('Get Roles')
+
+  const fetchRoles = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await api.get<RolesResponse>('/roles', {
         params: {
           format: 'json',
-          page,
-          size,
         },
       });
 
@@ -73,9 +73,10 @@ export const useRoles = (): UseRolesReturn => {
   }, []);
 
   useEffect(() => {
+    fetchRoles()
     // Optionally, fetch the first page by default
     // fetchRoles(1, 10);
-  }, [fetchRoles]);
+  }, []);
 
   const addRole = async (role: { name: string; permissions: number[] }) => {
     setLoading(true);
@@ -84,7 +85,7 @@ export const useRoles = (): UseRolesReturn => {
       const response = await api.post('/roles', role);
       if (response.status === 201 || response.status === 200) {
         toast.success(`Role "${response.data.data.name}" created successfully.`);
-        fetchRoles(1, 10); // Refresh the first page
+        fetchRoles(); // Refresh the first page
       } else {
         toast.error('Failed to create role. Please try again.');
       }
@@ -106,7 +107,7 @@ export const useRoles = (): UseRolesReturn => {
     try {
       await api.put(`/roles/${id}`, role);
       toast.success(`Role "${role.name}" updated successfully.`);
-      fetchRoles(1, 10); // Refresh the first page
+      fetchRoles(); // Refresh the first page
     } catch (err: unknown) {
       handleAxiosError(err);
       if (axios.isAxiosError(err)) {
@@ -125,7 +126,7 @@ export const useRoles = (): UseRolesReturn => {
     try {
       await api.delete(`/roles/${id}`);
       toast.success(`Role deleted successfully.`);
-      fetchRoles(1, 10); // Refresh the first page
+      fetchRoles(); // Refresh the first page
     } catch (err: unknown) {
       handleAxiosError(err);
       if (axios.isAxiosError(err)) {

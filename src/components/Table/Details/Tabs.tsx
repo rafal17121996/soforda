@@ -1,7 +1,9 @@
 // src/components/Tabs.tsx
 
 import React from "react";
-import { Tab } from "../Details";
+
+import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
+import { setActiveTab, Tab } from "../../../store/tabSlice";
 
 const PayrollDetailIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -129,17 +131,18 @@ const EmploymentIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 interface PropsTabs {
   renderTabContent: () => JSX.Element | null;
-  activeTab: Tab;
-  setActiveTab: (tab: Tab) => void;
-  onUpdate: () => void;
-  onUpdatePayrollDetails: () => void;
 }
 
 export const Tabs: React.FC<PropsTabs> = ({
   renderTabContent,
-  activeTab,
-  setActiveTab,
 }) => {
+
+  const activeTab = useAppSelector((state) => state.tab.activeTab);
+  const dispatch = useAppDispatch();
+
+  const handleTabChange = (tab: Tab) => {
+    dispatch(setActiveTab(tab));
+  };
   return (
     <div className="md:flex">
       <ul className="flex flex-col space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
@@ -153,7 +156,7 @@ export const Tabs: React.FC<PropsTabs> = ({
         ).map((tab) => (
           <li key={tab}>
             <button
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               className={`inline-flex items-center px-4 py-3 rounded-lg w-full ${
                 activeTab === tab
                   ? "inline-flex items-center px-4 py-3 text-white bg-indigo-700 rounded-lg active w-full"

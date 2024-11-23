@@ -182,7 +182,7 @@ export const UserSquareIcon = (props: React.SVGProps<SVGSVGElement>) => (
     onClick,
   }: {
     active: boolean;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
   }) => (
     <div
       className="active-indicator"
@@ -200,7 +200,7 @@ export const UserSquareIcon = (props: React.SVGProps<SVGSVGElement>) => (
       title={active ? "Active License" : "Inactive License"}
       onClick={(e) => {
         e.stopPropagation(); // Prevent triggering card flip
-        onClick();
+        onClick(e);
       }}
     ></div>
   );

@@ -73,7 +73,8 @@ export const Login: React.FC = () => {
           <div>
             <ButtonComponent
               label={loading ? "Logowanie..." : "Zaloguj"}
-              type={ButtonType.Success}
+              text={loading ? "Logowanie..." : "Zaloguj"}
+              type={ButtonType.Primary}
               buttonType={ButtonHTMLType.Submit}
             />
           </div>

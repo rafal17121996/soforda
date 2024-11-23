@@ -4,8 +4,6 @@ import { useRoles } from "../../hooks/useRoles"; // Import the useRoles hook
 import { useNotAssignedWorkers } from "../../hooks/useNotAssignedWorkers"; // Import the custom hook
 import api from "../../api/axiosConfig";
 import { RegisterUser } from "../../types/RegisterUser";
-import { ButtonComponent } from "../ButtonComponent";
-import { ButtonHTMLType, ButtonType } from "../../enums/ButtonType";
 import { User } from "../../types/User";
 import { getErrorMessage } from "../../utils/errorHandler";
 import Select, { SingleValue } from "react-select";
@@ -22,9 +20,10 @@ interface RoleOption {
 
 interface AddUserFormProps {
   onAdd: (user: User) => void;
+  onClose: () => void;
 }
 
-const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd }) => {
+const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd, onClose }) => {
   const [username, setUsername] = useState<string>("");
   const [selectedWorker, setSelectedWorker] = useState<WorkerOption | null>(null);
   const [selectedRole, setSelectedRole] = useState<RoleOption | null>(null);
@@ -96,15 +95,14 @@ const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
-      <h2 className="text-xl font-semibold mb-4 text-center">Add New User</h2>
+    <form onSubmit={handleSubmit}>
 
       {error && (
         <div className="mb-4 text-red-500 text-sm text-center">{error}</div>
       )}
 
       {/* Username Field */}
-      <div className="mb-4">
+      <div className="w-full max-w-sm min-w-[200px] mt-4">
         <label className="block text-gray-700">Username</label>
         <input
           type="text"
@@ -117,7 +115,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd }) => {
       </div>
 
       {/* Worker Selection */}
-      <div className="mb-4">
+      <div className="w-full max-w-sm min-w-[200px] mt-4">
         <label className="block text-gray-700">Worker</label>
         {workersLoading ? (
           <p className="text-gray-500">Loading workers...</p>
@@ -138,7 +136,7 @@ const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd }) => {
       </div>
 
       {/* Role Selection */}
-      <div className="mb-4">
+      <div className="w-full max-w-sm min-w-[200px] mt-4">
         <label className="block text-gray-700">Role</label>
         {rolesLoading ? (
           <p className="text-gray-500">Loading roles...</p>
@@ -159,19 +157,29 @@ const AddUserForm: React.FC<AddUserFormProps> = ({ onAdd }) => {
       </div>
 
       {/* Submit Button */}
-      <div className="flex justify-center">
-        <ButtonComponent
-          label={isSubmitting ? "Adding..." : "Add User"}
-          type={ButtonType.Success}
-          buttonType={ButtonHTMLType.Submit}
-          disabled={
-            isSubmitting ||
-            workersLoading ||
-            rolesLoading ||
-            !!workersError ||
-            !!rolesError
-          }
-        />
+     <div className="mt-8 p-6 pt-0">
+        <div className="flex space-x-2">
+          <button
+            className="w-full mx-auto select-none rounded border border-red-600 py-2 px-4 text-center text-sm font-semibold text-red-600 transition-all hover:bg-red-600 hover:text-white hover:shadow-md hover:shadow-red-600/20 active:bg-red-700 active:text-white active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="button"
+            data-dialog-close="true"
+            onClick={onClose}
+          >
+            Zamknij
+          </button>
+          <button
+            className="w-full mx-auto select-none rounded bg-slate-800 py-2 px-4 text-center text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition-all hover:shadow-lg hover:shadow-slate-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="submit"
+            data-dialog-close="true"
+            disabled={ isSubmitting ||
+              workersLoading ||
+              rolesLoading ||
+              !!workersError ||
+              !!rolesError}
+          >
+            Zapisz
+          </button>
+        </div>
       </div>
     </form>
   );
