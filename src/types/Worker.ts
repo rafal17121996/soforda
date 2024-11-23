@@ -28,6 +28,10 @@ export interface PayrollDetail {
   tax_id_number: string;
   social_security_number: string;
   health_insurance_provider: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  birthday: string;
 }
 
 export interface DrivingLicense {
@@ -66,6 +70,10 @@ export interface DriverCard {
   date_issued: string;
   valid_until: string;
   active: boolean;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  birthday: string;
 }
 
 export interface Employment {

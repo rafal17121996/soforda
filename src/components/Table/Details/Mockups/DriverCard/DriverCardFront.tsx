@@ -14,16 +14,14 @@ import ConfirmationModal from "../../../../ConfirmationModal";
 import "flag-icons/css/flag-icons.min.css";
 
 interface DriverCardFrontProps {
-  driverCards: DriverCard[];
+  driverCard: DriverCard;
 }
 
-const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
+const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCard }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
+  // const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [formState, setFormState] = useState<DriverCard | null>(null);
-
-  const driverCard = driverCards[currentCardIndex];
 
   useEffect(() => {
     if (driverCard) {
@@ -31,23 +29,23 @@ const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
     }
   }, [driverCard]);
 
-  const handlePrevCard = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentCardIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : driverCards.length - 1
-    );
-    setIsEditing(false);
-    setIsDeleteModalOpen(false);
-  };
+  // const handlePrevCard = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setCurrentCardIndex((prevIndex) =>
+  //     prevIndex > 0 ? prevIndex - 1 : driverCard.length - 1
+  //   );
+  //   setIsEditing(false);
+  //   setIsDeleteModalOpen(false);
+  // };
 
-  const handleNextCard = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentCardIndex((prevIndex) =>
-      prevIndex < driverCards.length - 1 ? prevIndex + 1 : 0
-    );
-    setIsEditing(false);
-    setIsDeleteModalOpen(false);
-  };
+  // const handleNextCard = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setCurrentCardIndex((prevIndex) =>
+  //     prevIndex < driverCards.length - 1 ? prevIndex + 1 : 0
+  //   );
+  //   setIsEditing(false);
+  //   setIsDeleteModalOpen(false);
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!formState) return;
@@ -125,7 +123,7 @@ const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
       onClick={(e) => e.stopPropagation()}
       style={{ position: "relative" }}
     >
-      <div className="license-front">
+      <div className="driver-card-front">
         <div className="flag-section">
           <span className="fi fi-eu"></span>
           <div className="country-section">
@@ -171,89 +169,103 @@ const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
           <div className="info-section">
             <div className="info-row">
               <span className="value-blue">1.</span>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="card_number"
-                  value={formState?.card_number || ""}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Card Number"
-                />
-              ) : (
-                <span className="value">{driverCard.card_number}</span>
-              )}
+              <span className="value">{driverCard.last_name}</span>
             </div>
             <div className="info-row">
               <span className="value-blue">2.</span>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="issuing_authority"
-                  value={formState?.issuing_authority || ""}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Issuing Authority"
-                />
-              ) : (
-                <span className="value">{driverCard.issuing_authority}</span>
-              )}
+              <span className="value-gray">
+                {driverCard.first_name} {driverCard.middle_name}
+              </span>
             </div>
             <div className="info-row">
               <span className="value-blue">3.</span>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="driving_license_number"
-                  value={formState?.driving_license_number || ""}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Driving License Number"
-                />
-              ) : (
-                <span className="value">
-                  {driverCard.driving_license_number}
-                </span>
-              )}
+              <span className="value">
+                {driverCard.birthday
+                  ? new Date(driverCard.birthday).toLocaleDateString()
+                  : ""}
+              </span>
             </div>
             <div className="info-row">
               <span className="value-blue">4a.</span>
               {isEditing ? (
                 <input
                   type="date"
-                  name="date_issued"
+                  name="dateIssued"
                   value={formState?.date_issued || ""}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Date Issued"
                 />
               ) : (
-                <span className="value">
+                <span className="value-gray">
                   {driverCard.date_issued
                     ? new Date(driverCard.date_issued).toLocaleDateString()
                     : ""}
                 </span>
               )}
-            </div>
-            <div className="info-row">
               <span className="value-blue">4b.</span>
               {isEditing ? (
                 <input
-                  type="date"
-                  name="valid_until"
+                  type="text"
+                  name="placeOfIssue"
                   value={formState?.valid_until || ""}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Valid Until"
                 />
               ) : (
-                <span className="value">
+                <span className="value-gray">
                   {driverCard.valid_until
                     ? new Date(driverCard.valid_until).toLocaleDateString()
                     : ""}
                 </span>
               )}
             </div>
+            <div className="info-row">
+              <span className="value-blue">4c.</span>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="valid_until"
+                  value={formState?.issuing_authority || ""}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="Valid Until"
+                />
+              ) : (
+                <span className="value-gray">
+                  {driverCard.issuing_authority}
+                </span>
+              )}
+            </div>
+            <div className="info-row">
+              <span className="value-blue">5a.</span>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="number"
+                  value={formState?.driving_license_number || ""}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="number"
+                />
+              ) : (
+                <span className="value">{driverCard.driving_license_number}</span>
+              )}
+            </div>
+            <div className="info-row">
+            <span className="value-blue">5b.</span>
+            {isEditing ? (
+              <input
+                type="text"
+                name="number"
+                value={formState?.card_number || ""}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="number"
+              />
+            ) : (
+              <span className="value">{driverCard.card_number}</span>
+            )}
+          </div>
           </div>
         </div>
         <ActiveIndicator
@@ -276,7 +288,7 @@ const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
           onCancel={handleCardModal}
           cancel={true}
         />
-        {driverCards.length > 1 && (
+        {/* {driverCards.length > 1 && (
           <div className="navigation-buttons flex justify-center">
             <button
               className="prev-card-button"
@@ -296,7 +308,7 @@ const DriverCardFront: React.FC<DriverCardFrontProps> = ({ driverCards }) => {
               &gt;
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

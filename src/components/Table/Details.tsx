@@ -32,7 +32,7 @@ export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayr
       case "payroll_details":
         return <PayrollDetailsTab workerId={worker.id} payrollDetail={worker.payroll_detail} onUpdatePayrollDetails={onUpdatePayrollDetails} />;
       case "driver_card":
-        return <DriverCardTab driverCards={worker.driver_card} />;
+        return <DriverCardTab workerId={worker.id} driverCards={worker.driver_card} />;
       case "employment":
         return <EmploymentTab id={worker.id} employment={worker.employments} />;
       default:
