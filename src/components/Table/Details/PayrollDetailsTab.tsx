@@ -5,7 +5,7 @@ import { PayrollDetail } from "../../../types/Worker";
 import { FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import { toast } from "react-toastify";
 import api from "../../../api/axiosConfig";
-import { getErrorMessage } from "../../../utils/errorHandler";
+import { handleAxiosError } from '../../../utils/handleAxiosError';
 
 interface PayrollDetailsTabProps {
   payrollDetail: PayrollDetail;
@@ -77,10 +77,8 @@ const PayrollDetailsTab: React.FC<PayrollDetailsTabProps> = ({ payrollDetail, wo
       toast.success("Szczegóły wynagrodzenia zostały zaktualizowane pomyślnie.");
       setEditMode(false);
       onUpdatePayrollDetails(); // Refresh data in parent component
-    } catch (error: any) {
-      const errorMessage = getErrorMessage(error);
-      console.error("Error updating payroll details:", error);
-      toast.error(`Wystąpił błąd: ${errorMessage}`);
+    } catch (error: unknown) {
+      handleAxiosError(error);
     }
   };
   

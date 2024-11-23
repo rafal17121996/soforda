@@ -89,7 +89,7 @@ export const Users: React.FC = () => {
           />
         </div>
         <div className="flex gap-5 flex-row p-5 items-center">
-          <Search handleSubmit={handleSearch} />
+          <Search handleSubmit={handleSearch}  label="Wyszukaj"/>
           <ExportButton
             paginationData={paginationData}
             tempSearch={tempSearch}

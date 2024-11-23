@@ -34,7 +34,7 @@ export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayr
       case "driver_card":
         return <DriverCardTab driverCards={worker.driver_card} />;
       case "employment":
-        return <EmploymentTab employment={worker.employment} />;
+        return <EmploymentTab id={worker.id} employment={worker.employments} />;
       default:
         return null;
     }
@@ -44,8 +44,6 @@ export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayr
     <div className="bg-white shadow-md rounded-lg p-6">
       <Tabs
         renderTabContent={renderTabContent}
-        // onUpdate={onUpdate}
-        // onUpdatePayrollDetails={onUpdatePayrollDetails} // Pass onUpdate to Tabs
       />
     </div>
   );

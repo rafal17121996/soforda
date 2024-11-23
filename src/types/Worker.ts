@@ -11,7 +11,7 @@ export interface Worker {
   payroll_detail: PayrollDetail;
   driving_license: DrivingLicense[];
   driver_card: DriverCard[];
-  employment: Employment[];
+  employments: Employment[];
 }
 
 export interface User {
@@ -74,4 +74,7 @@ export interface Employment {
   worker_id: number;
   company_id: number;
   id: number;
+  worker_first_name: string,
+  worker_last_name: string,
+  company_name: string
 }

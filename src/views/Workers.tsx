@@ -12,6 +12,7 @@ import { handleAxiosError } from "../utils/handleAxiosError";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { ButtonType } from "../enums/ButtonType";
 import { Skeleton } from "@mui/material";
+import Search from "../components/Search";
 
 interface WorkersResponse {
   items: Worker[];
@@ -24,6 +25,7 @@ interface WorkersResponse {
 const Workers: React.FC = () => {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [tempSearch, setTempSearch] = useState<string>("");
 
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -36,13 +38,14 @@ const Workers: React.FC = () => {
 
   // Memoized function to fetch workers with pagination
   const fetchWorkers = useCallback(
-    async (currentPage: number, pageSize: number) => {
+    async (currentPage: number, pageSize: number, search: string = '') => {
       try {
         setLoading(true);
         const response = await api.get<WorkersResponse>("/workers", {
           params: {
             page: currentPage,
             size: pageSize,
+            search
           },
         });
         setWorkers(response.data.items);
@@ -60,7 +63,7 @@ const Workers: React.FC = () => {
 
   // Fetch workers on component mount and when page or size changes
   useEffect(() => {
-    fetchWorkers(page, size);
+    fetchWorkers(page, size, tempSearch);
   }, [fetchWorkers, page, size]);
 
   const handleAddWorkerClick = () => {
@@ -138,12 +141,17 @@ const Workers: React.FC = () => {
     }
   };
 
+  const handleSearch = (search: string) => {
+    setTempSearch(search);
+    fetchWorkers(1, size, search);
+  };
+
+
   const renderPagination = () => {
     const pageNumbers = [];
     for (let i = 1; i <= pages; i++) {
       pageNumbers.push(i);
     }
-
     return (
       <div className="flex justify-center items-center mt-4 space-x-2">
         <button
@@ -208,37 +216,7 @@ const Workers: React.FC = () => {
           />
 
           {/* Search Input */}
-          <div className="ml-3">
-            <div className="w-full max-w-sm min-w-[200px] relative">
-              <div className="relative">
-                <input
-                  className="bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-800 text-black text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
-                  placeholder="Search for worker..."
-                  disabled={loading} // Optionally disable while loading
-                />
-                <button
-                  className="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded"
-                  type="button"
-                  disabled={loading} // Optionally disable while loading
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={3}
-                    stroke="currentColor"
-                    className="w-8 h-8 text-slate-600"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+    <Search label="Wyszukaj" handleSubmit={handleSearch}/>
         </div>
       </div>
 

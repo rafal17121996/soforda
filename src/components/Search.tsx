@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef, ChangeEvent, FormEvent } from "reac
 
 interface PropsSearch {
   handleSubmit: (searchTerm: string) => void;
+  label: string
 }
 
-export const Search: React.FC<PropsSearch> = ({ handleSubmit }) => {
+export const Search: React.FC<PropsSearch> = ({ handleSubmit, label }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,7 +42,7 @@ export const Search: React.FC<PropsSearch> = ({ handleSubmit }) => {
         type="text"
         value={searchTerm}
         onChange={handleChange}
-        placeholder="Wyszukaj użytkownika..."
+        placeholder={label}
         className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </form>
