@@ -1,18 +1,17 @@
+// src/components/Layout/Layout.tsx
 import React from "react";
-import { Navbar } from "../Navbar/Navbar";
+import Navbar from "../Navbar/Navbar";
 import { ToastContainer } from 'react-toastify';
-
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  console.log(children)
   return (
-    <div className="flex flex-row min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="h-screen max-h-screen flex justify-center flex-grow p-5 overflow-y-scroll">
+      <main className="flex-grow overflow-y-auto">
         {children}
       </main>
       <ToastContainer 

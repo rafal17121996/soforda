@@ -4,28 +4,24 @@ import { Link } from "react-router-dom";
 
 export const Home: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
       {/* Nagłówek */}
-      <h1 className="text-5xl font-bold mb-6 text-gray-800">
-        Witaj w Naszej Aplikacji
+      <h1 className="text-6xl font-extrabold text-white mb-4">
+        Elevate Your Experience
       </h1>
       
       {/* Opis */}
-      <p className="text-lg text-center mb-8 max-w-2xl text-gray-600">
-        Hallo Arschloch dolor sit amet, consectetur adipiscing elit. Donec vel
-        gravida arcu. Vestibulum feugiat, sapien ultrices fermentum congue,
-        quam velit venenatis sem, sit amet aliquam massa nisl quis neque. Fusce
-        ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus,
-        ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit.
+      <p className="text-xl text-center text-white mb-8 max-w-3xl">
+        Empowering your business with innovative solutions and seamless integration.
       </p>
       
       {/* Przyciski Nawigacyjne */}
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
         <Link
           to="/login"
-          className="w-48 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-center"
+          className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-lg shadow-md hover:bg-gray-100 transition duration-300"
         >
-          Zaloguj się
+          Get Started
         </Link>
 
       </div>

@@ -1,0 +1,423 @@
+/* src/components/DrivingLicense.css */
+
+/* License Container */
+.license-container {
+  width: 450px; /* Updated to match your earlier request */
+  height: 283px; /* Updated to maintain aspect ratio */
+  perspective: 1000px;
+  margin: 0 auto; /* Centers the container within its parent */
+  cursor: pointer;
+}
+
+/* License Card */
+.license-card {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.license-card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Front Side */
+.license-front {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  background: linear-gradient(135deg, #e0f7fa, #ffebee);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.input-field {
+  width: 100%;
+  font-size: 0.875rem; /* Match the font size of spans */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+  box-sizing: border-box;
+  border: none; /* Remove border */
+  border-bottom: 1px solid #ccc; /* Optional underline for visual consistency */
+  background: none;
+  color: #1e293b; /* Match the text color */
+}
+
+/* Ensure .info-row elements align properly */
+.info-row {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+  gap: 8px; /* Space between the number and the value */
+  white-space: nowrap; /* Prevents wrapping */
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between date and place of birth */
+}
+
+/* Fix widths if necessary */
+
+
+/* Back Side */
+.license-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  background: linear-gradient(135deg, #e0f7fa, #ffebee);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+  box-sizing: border-box;
+  transform: rotateY(180deg);
+}
+
+/* Flag Section */
+.flag-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.flag-section .fi {
+  margin-right: 10px;
+  font-size: 3rem; /* Adjusted size */
+  width: 45px;
+  height: 45px;
+}
+
+.flag-section .fi-eu {
+  font-size: 4rem; /* Specific flag size */
+}
+
+/* Country Name */
+.country-name {
+  font-size: 1rem; /* Corrected to remove space */
+  font-weight: bold;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* DrivingLicense.css */
+
+/* Country Section */
+.country-section {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+  gap: 4px; /* Space between label and value */
+}
+
+/* Country Label */
+.country-label {
+  font-size: 1rem; /* Match the existing font size */
+  font-weight: bold;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Static Country Name */
+.value-gray {
+  font-size: 0.875rem; /* text-sm, equivalent to 14px */
+  color: #475569; /* text-slate-600 */
+}
+
+/* Input Field for Country */
+.input-field-country {
+  font-size: 0.875rem; /* Match the font size of .value-gray */
+  color: #475569; /* Match the text color */
+  border: none; /* Remove border */
+  background: transparent; /* Remove background */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+  outline: none; /* Remove outline on focus */
+  /* Optional: Add a subtle underline to mimic the static text */
+  border-bottom: 1px solid #ccc;
+  height: 1em; /* Align height with text */
+  line-height: 1em;
+}
+
+/* Ensure the input field aligns properly with text */
+.input-field-country::placeholder {
+  color: #ccc; /* Optional: Placeholder color */
+}
+
+
+/* Data Section */
+.data-section {
+  display: flex;
+  align-items: flex-start; /* Changed from 'top' to 'flex-start' */
+  margin-top: 5px; /* Corrected margin */
+}
+
+.profile-icon {
+  margin-right: 20px;
+}
+
+/* Info Section */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ensures it takes available space */
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 1px;
+}
+
+.label {
+  width: 120px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.value {
+  font-weight: 600; /* font-semibold */
+  font-size: 0.875rem; /* text-sm, equivalent to 14px */
+  color: #1e293b; /* text-slate-800 */
+}
+
+.value-blue {
+  /* margin-right: 4px; */
+  /* margin-left: 4px; */
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+  color: #1056b7;
+}
+
+.value-blue-table {
+  margin-right: 4px;
+  margin-left: 4px;
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+  color: #1056b7;
+  text-align: center;
+}
+
+.value-gray {
+  font-size: 0.875rem; /* text-sm */
+  color: #475569; /* text-slate-600 */
+}
+
+/* Bottom Section */
+.bottom-section {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+}
+
+/* License Table on Back */
+.license-table {
+  width: 100%;
+  table-layout: fixed; /* Ensures columns have fixed widths */
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.license-table th,
+.license-table td {
+  border-bottom: 1px solid #b4c2d7;
+  border-right: 1px solid #b4c2d7;
+  padding: 2px;
+  text-align: left;
+  vertical-align: middle;
+}
+.col-type {
+  width: 10%;
+}
+
+.col-valid-since {
+  width: 25%;
+}
+
+.col-valid-till {
+  width: 25%;
+}
+
+.col-restrictions {
+  width: 25%;
+}
+
+.col-actions {
+  width: 15%;
+}
+.actions-cell {
+  text-align: center; /* Center content horizontally */
+  vertical-align: middle; /* Center content vertically */
+}
+
+.button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 0px; /* Spacing between buttons */
+  justify-content: left; /* Center buttons horizontally */
+  align-items: center; /* Center buttons vertically */
+}
+
+/* Input Fields in Table */
+.table-input {
+  width: 100%;
+  font-size: 0.875rem;
+  height: 1.2em;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.table-input:focus {
+  outline: none;
+  border-bottom: 1px solid #000;
+}
+
+/* Buttons in Table */
+.table-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2;
+  font-size: 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+}
+
+.save-button,
+.cancel-button,
+.edit-button {
+  color: black;
+}
+
+.save-button:hover,
+.cancel-button:hover,
+.edit-button:hover {
+  background-color: #b7abb72a;
+}
+
+.edit-button {
+  color: black;
+  background: transparent;
+}
+.edit-button:hover {
+  background-color: #b7abb72a;
+}
+.delete-button {
+  color: black;
+}
+.delete-button:hover {
+  background-color: #b7abb72a;
+}
+
+/* Flipped Card */
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Status Styles */
+.status.active {
+  color: green;
+  font-weight: bold;
+}
+
+.status.inactive {
+  color: red;
+  font-weight: bold;
+}
+
+/* src/components/DrivingLicense.css */
+
+/* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2px;
+  gap: 0px;
+}
+
+/* Pagination Buttons */
+.pagination-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.page-numbers {
+  display: flex;
+  flex-direction: row;
+  gap: 4px; /* Adjust the spacing between buttons as needed */
+}
+
+.page-number {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover:not(:disabled),
+.page-number:hover:not(.active-page) {
+  background-color: #cfcfcf;
+}
+
+.pagination-button:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Active Page */
+.active-page {
+  background-color: transparent;
+  color: black;
+}
+
+.page-number.active-page:hover {
+  background-color: transparent;
+}
+
+
+
+/* Delete License Button */
+.delete-license-button {
+  position: absolute;
+  bottom: 10px; /* Align vertically with ActiveIndicator */
+  right: 35px; /* Adjust horizontally to place before ActiveIndicator */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FF0000; /* Red color for delete */
+}
+
+.delete-license-button:hover {
+  color: #cc0000; /* Darker red on hover */
+}
+
+.delete-license-button:focus {
+  outline: none;
+}
+

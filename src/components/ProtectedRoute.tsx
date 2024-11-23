@@ -1,29 +1,24 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/strore';
-
+// src/components/ProtectedRoute.tsx
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAppSelector } from "../hooks/useAppDispatch";
 
 interface ProtectedRouteProps {
-  roles?: string[];
+  children: JSX.Element;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
-  const auth = useSelector((state: RootState) => state.auth);
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
-  console.log("auth")
-  console.log(auth)
-  console.log("auth")
-  
-  if (!auth.isAuthenticated) {
+  if (loading) {
+    return <p className="text-center mt-10">Loading...</p>; // Or a spinner component
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
-  if (roles && !roles.some(role => auth.role === role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-  
-  return <Outlet />;
+
+  return children;
 };
 
 export default ProtectedRoute;

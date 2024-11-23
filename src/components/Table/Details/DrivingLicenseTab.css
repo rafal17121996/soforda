@@ -1,0 +1,86 @@
+/* src/components/DrivingLicenseTab.css */
+
+.license-tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  /* Remove max-width or set a higher value */
+  /* max-width: 800px; */
+  width: 100%; /* Allows it to use full width */
+  margin: 0 auto;
+}
+
+
+
+.nav-button {
+  background-color: #007bff; /* Blue background */
+  color: #fff; /* White icon color */
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.nav-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+.license-content {
+  display: flex;
+  flex-direction: column; /* Stack DrivingLicense and footer vertically */
+  align-items: center; /* Center items horizontally */
+  /* Remove flex: 1; */
+  /* Optionally set a fixed width or let it adjust based on content */
+  /* width: 400px; */ /* Example fixed width */
+}
+
+
+.license-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px; /* Space above the footer */
+  gap: 15px; /* Space between counter and add button */
+}
+
+.license-counter {
+  font-size: 14px;
+  color: #555; /* Grey color for the counter text */
+}
+
+.add-license-button {
+  background-color: #28a745; /* Green background */
+  color: #fff; /* White icon color */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.add-license-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.add-license-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+

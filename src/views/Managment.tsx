@@ -1,6 +1,7 @@
 import AdminLayout from "../components/Layout/AdminLayout"
 import Companies from "./Companies"
 import Departments from "./Departments"
+import Permissions from "./Permissions"
 import Roles from "./Roles"
 
 const Managment = () => { 
@@ -10,7 +11,7 @@ const Managment = () => {
             <Roles />
             <Departments />
             <Companies />
-            <div></div>
+            <Permissions />
            </AdminLayout>
     )
 }

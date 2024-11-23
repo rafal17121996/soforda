@@ -1,71 +1,93 @@
 // src/components/NavItemWithSubmenu.tsx
-import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { FaChevronDown } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
+
+interface SubItem {
+  to: string;
+  label: string;
+}
 
 interface NavItemWithSubmenuProps {
   label: string;
-  subItems: { to: string; label: string }[];
+  subItems: SubItem[];
 }
 
-export const NavItemWithSubmenu: React.FC<NavItemWithSubmenuProps> = ({
+const NavItemWithSubmenu: React.FC<NavItemWithSubmenuProps> = ({
   label,
   subItems,
 }) => {
-  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Check if any subItem is active
+  // Close dropdown when clicking outside
   useEffect(() => {
-    const isSubItemActive = subItems.some(
-      (subItem) => subItem.to === location.pathname
-    );
-    if (isSubItemActive) {
-      setIsOpen(true);
-    }
-  }, [location.pathname, subItems]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
-  const toggleSubmenu = () => {
-    setIsOpen(!isOpen);
+  // Toggle dropdown menu
+  const toggleDropdown = () => {
+    setIsOpen((prev) => !prev);
   };
 
-  // Determine if any subItem is active
+  // Check if any subItem is active
   const isSubItemActive = subItems.some(
-    (subItem) => subItem.to === location.pathname
+    (subItem) => window.location.pathname === subItem.to
   );
 
   return (
-    <div>
-      {/* Main Menu Item */}
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={toggleSubmenu}
-        className={`w-full flex items-center justify-between text-left px-3 py-2 rounded-md text-sm font-medium ${
+        onClick={toggleDropdown}
+        className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
           isSubItemActive
-            ? 'text-white bg-sky-700'
-            : 'text-gray-300 hover:text-white hover:bg-sky-500'
+            ? "text-indigo-600 font-semibold"
+            : "text-gray-700 hover:text-indigo-600"
         }`}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         {label}
         <FaChevronDown
-          className={`ml-2 transform transition-transform ${
-            isOpen ? 'rotate-180' : ''
+          className={`ml-1 transition-transform duration-300 ${
+            isOpen ? "transform rotate-180" : ""
           }`}
+          aria-hidden="true"
         />
       </button>
-      {/* Submenu */}
+
+      {/* Dropdown Menu */}
       {isOpen && (
-        <div className="ml-4">
+        <div
+          className="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-20"
+          role="menu"
+          aria-label={`${label} submenu`}
+        >
           {subItems.map((subItem) => (
             <NavLink
               key={subItem.to}
               to={subItem.to}
               className={({ isActive }) =>
-                `block px-2 py-1 rounded-md text-sm font-medium mt-3 ${
+                `block px-4 py-2 text-sm transition-colors duration-300 ${
                   isActive
-                    ? 'text-white bg-sky-700'
-                    : 'text-gray-300 hover:text-white hover:bg-sky-500'
+                    ? "text-indigo-600 bg-gray-100"
+                    : "text-gray-700 hover:text-indigo-600 hover:bg-gray-100"
                 }`
               }
+              role="menuitem"
+              onClick={() => setIsOpen(false)}
             >
               {subItem.label}
             </NavLink>
@@ -75,3 +97,5 @@ export const NavItemWithSubmenu: React.FC<NavItemWithSubmenuProps> = ({
     </div>
   );
 };
+
+export default NavItemWithSubmenu;

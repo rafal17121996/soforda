@@ -1,67 +1,135 @@
 // src/components/DrivingLicenseTab.tsx
 
-import React from 'react';
-import { DrivingLicense } from '../../../types/Worker';
+import React, { useState, useEffect, useMemo } from "react";
+import DrivingLicense from "./Mockups/Driving License/DrivingLicense";
+import { DrivingLicense as DrivingLicenseType } from "../../../types/Worker";
+import "./DrivingLicenseTab.css";
+import { FaArrowLeft, FaArrowRight, FaPlus } from "react-icons/fa"; // Importing arrow and plus icons
+import api from "../../../api/axiosConfig"; // Ensure you have an axios instance
+import { toast } from "react-toastify";
 
 interface DrivingLicenseTabProps {
-  drivingLicense: DrivingLicense[];
+  drivingLicense: DrivingLicenseType[];
+  workerId: number;
+  onUpdate?: () => void;
 }
 
-const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({ drivingLicense }) => {
-  if (drivingLicense.length === 0) {
-    return <p>Brak danych dotyczących prawa jazdy.</p>;
+const DrivingLicenseTab: React.FC<DrivingLicenseTabProps> = ({
+  drivingLicense,
+  onUpdate,
+  workerId,
+}) => {
+  // 1. Sort the drivingLicense array: active first, then by date_issued descending
+  const sortedDrivingLicenses = useMemo(() => {
+    return [...drivingLicense].sort((a, b) => {
+      // If both licenses are active or inactive, sort by date_issued descending
+      if (a.active === b.active) {
+        const dateA = new Date(a.date_issued).getTime();
+        const dateB = new Date(b.date_issued).getTime();
+        return dateB - dateA; // Newest first
+      }
+      // Active licenses come first
+      return a.active ? -1 : 1;
+    });
+  }, [drivingLicense]);
+
+  // 2. Initialize currentIndex to 0 (first license in sorted list)
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 3. Reset currentIndex to 0 whenever the sorted list changes
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [sortedDrivingLicenses]);
+
+  // 4. Navigation handlers
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? sortedDrivingLicenses.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === sortedDrivingLicenses.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  // 5. Adding a new license
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddLicense = async () => {
+    const confirmAdd = window.confirm(
+      "Are you sure you want to add a new driving license?"
+    );
+    if (!confirmAdd) return;
+
+    setIsAdding(true);
+    try {
+      const payload = { worker_id: workerId };
+      await api.post<DrivingLicenseType>("/driving_licenses", payload);
+      toast.success("New driving license added successfully.");
+      if (onUpdate) onUpdate();
+      setIsAdding(false);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "Failed to add new driving license.";
+      console.error("Error adding new driving license:", error);
+      toast.error(`An error occurred: ${errorMessage}`);
+      setIsAdding(false);
+    }
+  };
+
+  // 6. Handle empty license list
+  if (sortedDrivingLicenses.length === 0) {
+    return (
+      <p className="no-license-text">No driving license data available.</p>
+    );
   }
 
+  // 7. Get the current license to display
+  const currentLicense = sortedDrivingLicenses[currentIndex];
+
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-          <tr>
-            <th className="py-3 px-6 text-left">ID</th>
-            <th className="py-3 px-6 text-left">Kraj</th>
-            <th className="py-3 px-6 text-left">Numer Prawa Jazdy</th>
-            <th className="py-3 px-6 text-left">Typy Prawa Jazdy</th>
-            <th className="py-3 px-6 text-left">Data Wydania</th>
-            <th className="py-3 px-6 text-left">Data Wygaśnięcia</th>
-            <th className="py-3 px-6 text-left">Data Wygaśnięcia Kodu 95</th>
-            <th className="py-3 px-6 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody className="text-gray-600 text-sm font-light">
-          {drivingLicense.map((dl) => (
-            <tr key={dl.id} className="border-b border-gray-200 hover:bg-gray-100">
-              <td className="py-3 px-6 text-left">{dl.id}</td>
-              <td className="py-3 px-6 text-left">{dl.country}</td>
-              <td className="py-3 px-6 text-left">{dl.number}</td>
-              <td className="py-3 px-6 text-left">
-                {dl.license_types.join(', ')}
-              </td>
-              <td className="py-3 px-6 text-left">
-                {new Date(dl.date_issued).toLocaleDateString()}
-              </td>
-              <td className="py-3 px-6 text-left">
-                {new Date(dl.valid_until).toLocaleDateString()}
-              </td>
-              <td className="py-3 px-6 text-left">
-                {dl.code_95_valid_until
-                  ? new Date(dl.code_95_valid_until).toLocaleDateString()
-                  : 'Brak'}
-              </td>
-              <td className="py-3 px-6 text-left">
-                {dl.active ? (
-                  <span className="flex items-center text-green-500">
-                    Aktywny
-                  </span>
-                ) : (
-                  <span className="flex items-center text-red-500">
-                    Nieaktywny
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="license-tab-container">
+      {/* Previous Button */}
+      <button
+        onClick={handlePrev}
+        className="nav-button prev-button"
+        aria-label="Previous License"
+      >
+        <FaArrowLeft />
+      </button>
+
+      {/* Driving License Content */}
+      <div className="license-content">
+        <DrivingLicense
+          key={currentLicense.id}
+          license={currentLicense}
+          onUpdate={onUpdate}
+        />
+        <div className="license-footer">
+          <span className="license-counter">
+            {currentIndex + 1} / {sortedDrivingLicenses.length}
+          </span>
+          <button
+            onClick={handleAddLicense}
+            className="add-license-button"
+            aria-label="Add New Driving License"
+            disabled={isAdding}
+          >
+            {isAdding ? "..." : <FaPlus />}
+          </button>
+        </div>
+      </div>
+
+      {/* Next Button */}
+      <button
+        onClick={handleNext}
+        className="nav-button next-button"
+        aria-label="Next License"
+      >
+        <FaArrowRight />
+      </button>
     </div>
   );
 };

@@ -1,102 +1,97 @@
-// src/components/Companies.tsx
+// src/components/Permissions.tsx
 import React, { useState, useEffect } from "react";
-import { useCompanies } from "../hooks/useCompanies";
 import { toast } from "react-toastify";
 import { ButtonType } from "../enums/ButtonType";
+import { handleAxiosError } from "../utils/handleAxiosError";
 import { ButtonComponent } from "../components/ButtonComponent";
 import ConfirmationModal from "../components/ConfirmationModal";
-import { handleAxiosError } from "../utils/handleAxiosError";
+import { usePermissions } from "../hooks/usePermissions";
 import Pagination from "../components/Pagination"; // Ensure this path is correct
 
-interface Company {
+interface Permission {
   id: number;
   name: string;
-  address: string;
-  number_of_employments: number;
 }
 
-const Companies: React.FC = () => {
-  const {
-    companies,
-    loading,
-    error,
-    fetchCompanies,
-    addCompany,
-    updateCompany,
-    deleteCompany,
-    totalPages,
-  } = useCompanies();
-
-  const [editingCompanyId, setEditingCompanyId] = useState<number | null>(null);
-  const [editFormData, setEditFormData] = useState<{
-    name: string;
-    address: string;
-  }>({ name: "", address: "" });
+const Permissions: React.FC = () => {
+  const [editingPermissionId, setEditingPermissionId] = useState<number | null>(null);
+  const [editFormData, setEditFormData] = useState<{ name: string }>({ name: "" });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [companyToDelete, setCompanyToDelete] = useState<number | null>(null);
+  const [permissionToDelete, setPermissionToDelete] = useState<number | null>(null);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-  const [createFormData, setCreateFormData] = useState<{
-    name: string;
-    address: string;
-  }>({ name: "", address: "" });
+  const [createFormData, setCreateFormData] = useState<{ name: string }>({ name: "" });
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 10; // Fixed page size as per requirement
 
-  useEffect(() => {
-    fetchCompanies(currentPage, pageSize);
-  }, [fetchCompanies, currentPage, pageSize]);
+  const {
+    permissions,
+    loading,
+    error,
+    fetchPermissions,
+    addPermission,
+    updatePermission,
+    deletePermission,
+    totalPages,
+  } = usePermissions();
 
-  // Handlers for Editing a Company
-  const handleEditClick = (company: Company) => {
-    setEditingCompanyId(company.id);
-    setEditFormData({ name: company.name, address: company.address });
+  useEffect(() => {
+    fetchPermissions(currentPage, pageSize);
+  }, [fetchPermissions, currentPage, pageSize]);
+
+  // Handlers for Editing a Permission
+  const handleEditClick = (permission: Permission) => {
+    setEditingPermissionId(permission.id);
+    setEditFormData({ name: permission.name });
   };
 
   const handleCancelEdit = () => {
-    setEditingCompanyId(null);
-    setEditFormData({ name: "", address: "" });
+    setEditingPermissionId(null);
+    setEditFormData({ name: "" });
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSave = async (id: number) => {
     // Basic validation
-    if (editFormData.name.trim() === "" || editFormData.address.trim() === "") {
-      toast.error("Name and Address cannot be empty.");
+    if (editFormData.name.trim() === "") {
+      toast.error("Nazwa uprawnienia nie może być pusta.");
       return;
     }
 
     try {
-      await updateCompany(id, {
+      await updatePermission(id, {
         name: editFormData.name,
-        address: editFormData.address,
       });
-      setEditingCompanyId(null);
-      setEditFormData({ name: "", address: "" });
+      setEditingPermissionId(null);
+      setEditFormData({ name: "" });
     } catch (err: unknown) {
       handleAxiosError(err);
     }
   };
 
-  // Handlers for Deleting a Company
+  // Handlers for Deleting a Permission
   const handleDeleteClick = (id: number) => {
-    setCompanyToDelete(id);
+    setPermissionToDelete(id);
     setIsDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (companyToDelete === null) return;
+    if (permissionToDelete === null) return;
 
     try {
-      await deleteCompany(companyToDelete);
+      await deletePermission(permissionToDelete);
       setIsDeleteModalOpen(false);
-      setCompanyToDelete(null);
+      setPermissionToDelete(null);
     } catch (err: unknown) {
       handleAxiosError(err);
     }
@@ -104,39 +99,38 @@ const Companies: React.FC = () => {
 
   const cancelDelete = () => {
     setIsDeleteModalOpen(false);
-    setCompanyToDelete(null);
+    setPermissionToDelete(null);
   };
 
-  // Handlers for Creating a Company
+  // Handlers for Creating a Permission
   const handleOpenCreateModal = () => {
     setIsCreateModalOpen(true);
-    setCreateFormData({ name: "", address: "" });
+    setCreateFormData({ name: "" });
   };
 
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
-    setCreateFormData({ name: "", address: "" });
+    setCreateFormData({ name: "" });
   };
 
   const handleCreateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCreateFormData({ ...createFormData, [e.target.name]: e.target.value });
   };
 
-  const handleCreateCompany = async () => {
+  const handleCreatePermission = async () => {
     // Basic validation
-    if (createFormData.name.trim() === "" || createFormData.address.trim() === "") {
-      toast.error("Name and Address cannot be empty.");
+    if (createFormData.name.trim() === "") {
+      toast.error("Nazwa uprawnienia nie może być pusta.");
       return;
     }
 
     try {
-      await addCompany({
+      await addPermission({
         name: createFormData.name,
-        address: createFormData.address,
       });
       handleCloseCreateModal();
-    } catch (error: unknown) {
-      handleAxiosError(error);
+    } catch (err: unknown) {
+      handleAxiosError(err);
     }
   };
 
@@ -174,48 +168,50 @@ const Companies: React.FC = () => {
   }
 
   if (error) {
-    return <p className="text-red-500">Error loading companies: {error}</p>;
+    return (
+      <p className="text-red-500">
+        Błąd podczas ładowania uprawnień: {error}
+      </p>
+    );
   }
 
   return (
     <div className="container mx-auto p-4">
-      {/* Header with Create Company Button */}
+      {/* Header with Create Permission Button */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Companies Management</h2>
+        <h2 className="text-2xl font-semibold">Zarządzanie Uprawnieniami</h2>
         <ButtonComponent
-          label="Add Company"
+          label="Dodaj Uprawnienie"
           type={ButtonType.Primary}
           onClick={handleOpenCreateModal}
         />
       </div>
 
-      {/* Companies Table */}
+      {/* Permissions Table */}
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
           <tr>
             <th className="py-3 px-6 text-center">ID</th>
-            <th className="py-3 px-6 text-center">Name</th>
-            <th className="py-3 px-6 text-center">Address</th>
-            <th className="py-3 px-6 text-center">Number of Employments</th>
-            <th className="py-3 px-6 text-center">Actions</th>
+            <th className="py-3 px-6 text-center">Nazwa</th>
+            <th className="py-3 px-6 text-center">Akcje</th>
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light">
-          {companies.length === 0 ? (
+          {permissions.length === 0 ? (
             <tr>
-              <td colSpan={5} className="py-3 px-6 text-center">
-                No companies available.
+              <td colSpan={3} className="py-3 px-6 text-center">
+                Brak dostępnych uprawnień.
               </td>
             </tr>
           ) : (
-            companies.map((company) => (
+            permissions.map((permission: Permission) => (
               <tr
-                key={company.id}
+                key={permission.id}
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
-                <td className="py-3 px-6 text-center">{company.id}</td>
+                <td className="py-3 px-6 text-center">{permission.id}</td>
                 <td className="py-3 px-6 text-center">
-                  {editingCompanyId === company.id ? (
+                  {editingPermissionId === permission.id ? (
                     <input
                       type="text"
                       name="name"
@@ -224,35 +220,19 @@ const Companies: React.FC = () => {
                       className="border rounded px-2 py-1 w-full text-center"
                     />
                   ) : (
-                    company.name
+                    permission.name
                   )}
                 </td>
                 <td className="py-3 px-6 text-center">
-                  {editingCompanyId === company.id ? (
-                    <input
-                      type="text"
-                      name="address"
-                      value={editFormData.address}
-                      onChange={handleEditInputChange}
-                      className="border rounded px-2 py-1 w-full text-center"
-                    />
-                  ) : (
-                    company.address
-                  )}
-                </td>
-                <td className="py-3 px-6 text-center">
-                  {company.number_of_employments}
-                </td>
-                <td className="py-3 px-6 text-center">
-                  {editingCompanyId === company.id ? (
+                  {editingPermissionId === permission.id ? (
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
-                        label="Save"
+                        label="Zapisz"
                         type={ButtonType.Success}
-                        onClick={() => handleSave(company.id)}
+                        onClick={() => handleSave(permission.id)}
                       />
                       <ButtonComponent
-                        label="Cancel"
+                        label="Anuluj"
                         type={ButtonType.Secondary}
                         onClick={handleCancelEdit}
                       />
@@ -260,14 +240,14 @@ const Companies: React.FC = () => {
                   ) : (
                     <div className="flex justify-center space-x-2">
                       <ButtonComponent
-                        label="Edit"
+                        label="Edytuj"
                         type={ButtonType.Primary}
-                        onClick={() => handleEditClick(company)}
+                        onClick={() => handleEditClick(permission)}
                       />
                       <ButtonComponent
-                        label="Delete"
+                        label="Usuń"
                         type={ButtonType.Danger}
-                        onClick={() => handleDeleteClick(company.id)}
+                        onClick={() => handleDeleteClick(permission.id)}
                       />
                     </div>
                   )}
@@ -288,62 +268,47 @@ const Companies: React.FC = () => {
       {/* Confirmation Modal for Deletion */}
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
-        title="Confirm Deletion"
-        message="Are you sure you want to delete this company? This action cannot be undone."
+        title="Potwierdź Usunięcie"
+        message="Czy na pewno chcesz usunąć to uprawnienie? Ta akcja jest nieodwracalna."
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         cancel={true}
       />
 
-      {/* Modal for Creating a Company */}
+      {/* Modal for Creating a Permission */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <h3 className="text-xl font-semibold mb-4">Add New Company</h3>
+            <h3 className="text-xl font-semibold mb-4">
+              Dodaj Nowe Uprawnienie
+            </h3>
             <div className="mb-4">
               <label
-                htmlFor="company-name"
+                htmlFor="permission-name"
                 className="block text-gray-700 mb-2"
               >
-                Company Name
+                Nazwa Uprawnienia
               </label>
               <input
                 type="text"
-                id="company-name"
+                id="permission-name"
                 name="name"
                 value={createFormData.name}
                 onChange={handleCreateInputChange}
                 className="border rounded px-3 py-2 w-full"
-                placeholder="Enter company name"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="company-address"
-                className="block text-gray-700 mb-2"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                id="company-address"
-                name="address"
-                value={createFormData.address}
-                onChange={handleCreateInputChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Enter company address"
+                placeholder="Wprowadź nazwę uprawnienia"
               />
             </div>
             <div className="flex justify-end space-x-4">
               <ButtonComponent
-                label="Cancel"
+                label="Anuluj"
                 type={ButtonType.Secondary}
                 onClick={handleCloseCreateModal}
               />
               <ButtonComponent
-                label="Add"
+                label="Dodaj"
                 type={ButtonType.Success}
-                onClick={handleCreateCompany}
+                onClick={handleCreatePermission}
               />
             </div>
           </div>
@@ -353,4 +318,4 @@ const Companies: React.FC = () => {
   );
 };
 
-export default Companies;
+export default Permissions;

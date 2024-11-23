@@ -5,6 +5,7 @@ export enum ButtonType {
     Danger = "danger",
     Warning = "warning",
     Info = "info",
+    Icon = "icon",
   }
   
 

@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import { Worker } from "../../types/Worker";
 import { Item } from "./Item";
+import { Skeleton } from "@mui/material";
 
 interface PropsTable {
   workers: Worker[];
   onEdit: (worker: Worker) => void;
   onDelete: (worker: Worker) => void;
+  loading?: boolean;
+  onUpdate: () => void;
+  onUpdatePayrollDetails: () => void;
 }
 
 export type ExpansionType = "details" | "employment";
 
-export const Table: React.FC<PropsTable> = ({ workers, onEdit, onDelete }) => {
+export const Table: React.FC<PropsTable> = ({
+  workers,
+  onEdit,
+  onDelete,
+  loading = false,
+  onUpdate,
+  onUpdatePayrollDetails,
+}) => {
   // Stan do śledzenia rozszerzonych wierszy
   const [expandedRows, setExpandedRows] = useState<{
     [key: number]: ExpansionType;
@@ -32,38 +43,106 @@ export const Table: React.FC<PropsTable> = ({ workers, onEdit, onDelete }) => {
     });
   };
 
-  if (workers.length === 0) {
+  if (!loading && workers.length === 0) {
     return <p>Brak dostępnych pracowników.</p>;
   }
 
   return (
-    <table className="min-w-full bg-white shadow-md rounded-lg">
-    <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-      <tr>
-          <th className="py-2 px-4 border-b">ID</th>
-          <th className="py-2 px-4 border-b">
-            
-          </th>
-          <th className="py-2 px-4 border-b">Drugie Imię</th>
-          <th className="py-2 px-4 border-b">Nazwisko</th>
-          <th className="py-2 px-4 border-b">Data Urodzenia</th>
-          <th className="py-2 px-4 border-b">Dział</th>
-          <th className="py-2 px-4 border-b">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {workers.map((worker) => (
-          <Item
-            worker={worker}
-            expandedRows={expandedRows}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            toggleRow={toggleRow}
-            key={worker.id}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className="relative overflow-x-auto sm:rounded-lg">
+      <table className="w-full text-left table-auto min-w-max">
+        <thead className="bg-indigo-600 rounded-t-lg">
+          <tr>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-800">ID</p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-800">
+                Nazwisko
+              </p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-800">Imię</p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-500">
+                Drugie Imię
+              </p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-500">
+                Data Urodzenia
+              </p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-500">Dział</p>
+            </th>
+            <th className="p-4 border-b border-slate-200 bg-slate-100">
+              <p className="lock font-semibold text-sm text-slate-500"></p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading
+            ? // Render Skeleton Rows
+              Array.from({ length: 10 }).map((_, index) => (
+                <tr key={index}>
+                  {/* ID */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Imię */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Drugie Imię */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Nazwisko */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Data Urodzenia */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Dział */}
+                  <td className="p-4 border-b border-slate-200">
+                    <div className="flex items-center h-full">
+                      <Skeleton variant="text" width="100%" height={24} />
+                    </div>
+                  </td>
+                  {/* Actions */}
+                  <td className="p-4 border-b border-slate-200 flex justify-center items-center">
+                    <Skeleton variant="circular" width={24} height={24} />
+                  </td>
+                </tr>
+              ))
+            : workers.map((worker) => (
+                <Item
+                  worker={worker}
+                  expandedRows={expandedRows}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  toggleRow={toggleRow}
+                  key={worker.id}
+                  onUpdate={onUpdate}
+                  onUpdatePayrollDetails={onUpdatePayrollDetails}
+                />
+              ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

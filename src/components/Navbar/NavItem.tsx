@@ -1,3 +1,4 @@
+// src/components/NavItem.tsx
 import React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -6,15 +7,16 @@ interface NavItemProps {
   label: string;
 }
 
-export const NavItem: React.FC<NavItemProps> = ({ to, label }) => {
+const NavItem: React.FC<NavItemProps> = ({ to, label }) => {
   return (
     <NavLink
       to={to}
+      end
       className={({ isActive }) =>
-        `w-full block px-3 py-2 rounded-md text-sm font-medium ${
+        `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${
           isActive
-            ? "text-white bg-sky-700"
-            : "text-gray-300 hover:text-white hover:bg-sky-500"
+            ? "text-indigo-600 font-semibold"
+            : "text-gray-700 hover:text-indigo-600"
         }`
       }
     >
@@ -22,3 +24,5 @@ export const NavItem: React.FC<NavItemProps> = ({ to, label }) => {
     </NavLink>
   );
 };
+
+export default NavItem;

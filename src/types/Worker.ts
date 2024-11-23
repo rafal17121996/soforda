@@ -11,6 +11,7 @@ export interface Worker {
   payroll_detail: PayrollDetail;
   driving_license: DrivingLicense[];
   driver_card: DriverCard[];
+  employment: Employment[];
 }
 
 export interface User {
@@ -34,11 +35,26 @@ export interface DrivingLicense {
   country: string;
   number: string;
   worker_id: number;
-  license_types: string[];
+  license_types: LicenseType[];
   date_issued: string;
   valid_until: string;
   code_95_valid_until: string;
   active: boolean;
+  place_of_birth: string;
+  place_of_issue: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  birthday: string;
+}
+
+export interface LicenseType {
+  id: number;
+  driving_license_id: number;
+  type: string
+  valid_since: string;
+  valid_till: string;
+  restrictions: string;
 }
 
 export interface DriverCard {
@@ -50,4 +66,12 @@ export interface DriverCard {
   date_issued: string;
   valid_until: string;
   active: boolean;
+}
+
+export interface Employment {
+  start_date: string;
+  end_date: string;
+  worker_id: number;
+  company_id: number;
+  id: number;
 }

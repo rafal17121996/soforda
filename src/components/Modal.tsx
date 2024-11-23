@@ -1,39 +1,37 @@
-import React from 'react';
+import React from "react";
 
 interface ModalProps {
   isOpen: boolean;
-  onClose: () => void;
   title: string;
+  subtitle: string;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  title,
+  subtitle,
+  children,
+}) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
+    <div
+      data-dialog-backdrop="dialog"
+      data-dialog-backdrop-close="true"
+      className="absolute left-0 top-0 inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300"
+    >
+      <div
+        data-dialog="dialog"
+        className="relative mx-auto flex w-full max-w-[26rem] flex-col rounded-xl bg-white bg-clip-border text-slate-700 shadow-md"
+      >
+        <div className="flex flex-col p-6 pb-0">
+          <h4 className="text-2xl mb-1 font-semibold text-slate-700">
+            {title}
+          </h4>
+          <p className="mb-1  text-slate-400">{subtitle}</p>
         </div>
-        <div className="p-4">
-          {children}
-        </div>
-        <div className="flex justify-end p-4 border-t">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-          >
-            Zamknij
-          </button>
-        </div>
+        <div className="p-4 pt-0">{children}</div>
       </div>
     </div>
   );

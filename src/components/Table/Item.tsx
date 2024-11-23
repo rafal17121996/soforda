@@ -11,6 +11,8 @@ interface PropsItem {
   toggleRow: (workerId: number, type: ExpansionType) => void;
   onEdit: (worker: Worker) => void;
   onDelete: (worker: Worker) => void;
+  onUpdate: () => void;
+  onUpdatePayrollDetails: () => void;
 }
 export const Item: React.FC<PropsItem> = ({
   worker,
@@ -18,38 +20,57 @@ export const Item: React.FC<PropsItem> = ({
   toggleRow,
   onEdit,
   onDelete,
+  onUpdate,
+  onUpdatePayrollDetails
 }) => {
   return (
     <React.Fragment key={worker.id}>
-      <tr>
-        <td className="py-2 px-4 border-b text-center">{worker.id}</td>
-        <td className="py-2 px-4 border-b text-center">{worker.first_name}</td>
-        <td className="py-2 px-4 border-b text-center">{worker.middle_name || "-"}</td>
-        <td className="py-2 px-4 border-b text-center">{worker.last_name}</td>
-        <td className="py-2 px-4 border-b text-center">{worker.birthday}</td>
-        <td className="py-2 px-4 border-b text-center">{worker.department_name}</td>
-        <td className="py-2 px-4 border-b space-x-2 text-center">
-          <div className="flex gap-2 justify-center">
+      <tr className="group hover:bg-slate-50 border-b border-slate-200">
+        <td className="p-4 py-5">
+          <p className="block font-semibold text-sm text-slate-800">
+            {worker.id}
+          </p>
+        </td>
+        <td className="p-4 py-5">
+          <p className="block font-semibold text-sm text-slate-800">{worker.last_name}</p>
+        </td>
+        <td className="p-4 py-5">
+          <p className="block font-semibold text-sm text-slate-800">{worker.first_name}</p>
+        </td>
+        <td className="p-4 py-5">
+          <p className="text-sm text-slate-600">{worker.middle_name}</p>
+        </td>
+        <td className="p-4 py-5">
+          <p className="text-sm text-slate-600">{worker.birthday}</p>
+        </td>
+        <td className="p-4 py-5">
+          <p className="text-sm text-slate-600">{worker.department_name}</p>
+        </td>
+        <td className="p-4 py-5">
+          <div className="flex justify-center space-x-2">
             <ButtonComponent
               label="Details"
-              type={ButtonType.Info}
+              type={ButtonType.Icon}
+              className="text-green-600 group-hover:bg-green-600 group-hover:text-white"
               onClick={() => toggleRow(worker.id, "details")}
             />
             <ButtonComponent
               label="Edit"
-              type={ButtonType.Primary}
+              type={ButtonType.Icon}
+              className="text-yellow-400 group-hover:bg-yellow-400 group-hover:text-white"
               onClick={() => onEdit(worker)}
             />
             <ButtonComponent
               label="Delete"
-              type={ButtonType.Danger}
+              type={ButtonType.Icon}
+              className="text-red-500 group-hover:bg-red-500 group-hover:text-white"
               onClick={() => onDelete(worker)}
             />
           </div>
         </td>
       </tr>
       {expandedRows[worker.id] && (
-        <ExpandedRows expandedRows={expandedRows} worker={worker} />
+        <ExpandedRows expandedRows={expandedRows} worker={worker} onUpdate={onUpdate} onUpdatePayrollDetails={onUpdatePayrollDetails}/>
       )}
     </React.Fragment>
   );

@@ -1,31 +1,44 @@
 // src/components/Details.tsx
+
 import React, { useState } from "react";
 import { Worker } from "../../types/Worker";
 import DrivingLicenseTab from "./Details/DrivingLicenseTab";
 import PayrollDetailsTab from "./Details/PayrollDetailsTab";
 import DriverCardTab from "./Details/DriverCardTab";
-import { Tabs } from "./Details/Tabs";
-import { EmploymentTab } from "./Details/EmploymentTab";
+import Tabs from "./Details/Tabs"; // Ensure correct import
+import EmploymentTab from "./Details/EmploymentTab";
 
 interface PropsDetails {
   worker: Worker;
+  onUpdate: () => void; // Add onUpdate prop
+  onUpdatePayrollDetails: () => void;
 }
 
-export type Tab = "driving_license" | "payroll_details" | "driver_card" | "employment";
+export type Tab =
+  | "driving_license"
+  | "payroll_details"
+  | "driver_card"
+  | "employment";
 
-export const Details: React.FC<PropsDetails> = ({ worker }) => {
-  const [activeTab, setActiveTab] = useState<Tab>("driving_license");
+export const Details: React.FC<PropsDetails> = ({ worker, onUpdate, onUpdatePayrollDetails }) => {
+  const [activeTab, setActiveTab] = useState<Tab>("payroll_details");
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "driving_license":
-        return <DrivingLicenseTab drivingLicense={worker.driving_license} />;
+        return (
+          <DrivingLicenseTab
+            drivingLicense={worker.driving_license}
+            onUpdate={onUpdate}
+            workerId={worker.id}
+          />
+        );
       case "payroll_details":
-        return <PayrollDetailsTab payrollDetail={worker.payroll_detail} />;
+        return <PayrollDetailsTab workerId={worker.id} payrollDetail={worker.payroll_detail} onUpdatePayrollDetails={onUpdatePayrollDetails} />;
       case "driver_card":
         return <DriverCardTab driverCards={worker.driver_card} />;
       case "employment":
-        return <EmploymentTab  />;
+        return <EmploymentTab employment={worker.employment} />;
       default:
         return null;
     }
@@ -33,7 +46,13 @@ export const Details: React.FC<PropsDetails> = ({ worker }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
-      <Tabs renderTabContent={renderTabContent} activeTab={activeTab} setActiveTab= {setActiveTab}/>
+      <Tabs
+        renderTabContent={renderTabContent}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onUpdate={onUpdate}
+        onUpdatePayrollDetails={onUpdatePayrollDetails} // Pass onUpdate to Tabs
+      />
     </div>
   );
 };

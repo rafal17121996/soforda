@@ -1,5 +1,5 @@
 // src/components/Departments.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { ButtonType } from "../enums/ButtonType";
 import { handleAxiosError } from "../utils/handleAxiosError";
@@ -7,6 +7,7 @@ import { ButtonComponent } from "../components/ButtonComponent";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { useDepartments } from "../hooks/useDepartments";
 import { Switch } from "../components/Switch";
+import Pagination from "../components/Pagination"; // Ensure this path is correct
 
 interface Department {
   id: number;
@@ -24,71 +25,40 @@ interface Worker {
 }
 
 const Departments: React.FC = () => {
-
-  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(
-    null
-  );
+  const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(null);
   const [editFormData, setEditFormData] = useState<{
     name: string;
     is_active: boolean;
   }>({ name: "", is_active: true });
 
-  const [isActive, setIsActive] = useState<boolean>(true)
+  const [isActive, setIsActive] = useState<boolean>(true);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(
-    null
-  );
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [createFormData, setCreateFormData] = useState<{
     name: string;
   }>({ name: "" });
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10; // Fixed page size as per requirement
 
   const {
     departments,
     loading,
     error,
+    fetchDepartments,
     addDepartment,
     updateDepartment,
     deleteDepartment,
+    totalPages,
   } = useDepartments(isActive);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <svg
-          className="animate-spin h-8 w-8 text-blue-600"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          ></path>
-        </svg>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <p className="text-red-500">
-        Błąd podczas ładowania departamentów: {error}
-      </p>
-    );
-  }
+  useEffect(() => {
+    fetchDepartments(currentPage, pageSize);
+  }, [fetchDepartments, currentPage, pageSize, isActive]);
 
   // Handlers for Editing a Department
   const handleEditClick = (department: Department) => {
@@ -110,7 +80,7 @@ const Departments: React.FC = () => {
   };
 
   const handleSave = async (id: number) => {
-    // Podstawowa walidacja
+    // Basic validation
     if (editFormData.name.trim() === "") {
       toast.error("Nazwa departamentu nie może być pusta.");
       return;
@@ -168,7 +138,7 @@ const Departments: React.FC = () => {
   };
 
   const handleCreateDepartment = async () => {
-    // Podstawowa walidacja
+    // Basic validation
     if (createFormData.name.trim() === "") {
       toast.error("Nazwa departamentu nie może być pusta.");
       return;
@@ -184,20 +154,69 @@ const Departments: React.FC = () => {
     }
   };
 
+  // Handler for Switch (isActive)
   const handleSwitch = () => {
-    setIsActive((prev) => !prev)
+    setIsActive((prev) => !prev);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  // Handler for Pagination
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <svg
+          className="animate-spin h-8 w-8 text-blue-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          ></path>
+        </svg>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-red-500">
+        Błąd podczas ładowania departamentów: {error}
+      </p>
+    );
   }
 
   return (
     <div className="container mx-auto p-4">
-      {/* Header with Create Department Button */}
+      {/* Header with Create Department Button and Switch */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Zarządzanie Departamentami</h2>
-        <ButtonComponent
-          label="Dodaj Departament"
-          type={ButtonType.Primary}
-          onClick={handleOpenCreateModal}
-        />
+        <div className="flex items-center space-x-4">
+          <ButtonComponent
+            label="Dodaj Departament"
+            type={ButtonType.Primary}
+            onClick={handleOpenCreateModal}
+          />
+          <div className="flex items-center">
+            <span className="mr-2 text-gray-700">Aktywne</span>
+            <Switch switchValue={isActive} handleSwitch={handleSwitch} />
+          </div>
+        </div>
       </div>
 
       {/* Departments Table */}
@@ -208,13 +227,7 @@ const Departments: React.FC = () => {
             <th className="py-3 px-6 text-center">Nazwa</th>
             <th className="py-3 px-6 text-center">Liczba Pracowników</th>
             <th className="py-3 px-6 text-center">Aktywny</th>
-
-            <th className="py-3 px-6 text-center">
-              <div className="flex text-center justify-center gap-2">
-                Akcje
-                <Switch switchValue={isActive} handleSwitch={handleSwitch}/>
-              </div>
-            </th>
+            <th className="py-3 px-6 text-center">Akcje</th>
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light">
@@ -299,6 +312,13 @@ const Departments: React.FC = () => {
           )}
         </tbody>
       </table>
+
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
       {/* Confirmation Modal for Deletion */}
       <ConfirmationModal
